@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Painel da Roda — Roda de Estilo</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script defer src="js/admin.js"></script>
+</head>
+<body>
+	<header class="site-header">
+		<div class="container header-inner">
+			<div class="header-left">
+				<button id="categoriesButton" class="btn-categories">📂 Categorias</button>
+				<div id="categoryMenu" class="category-menu">
+					<a href="#" class="category-item">Camisetas</a>
+					<a href="#" class="category-item">Bonés</a>
+					<a href="#" class="category-item">Cordas</a>
+					<a href="#" class="category-item">Calças</a>
+					<a href="#" class="category-item">Acessórios</a>
+					<a href="#" class="category-item">Mochilas</a>
+					<a href="#" class="category-item">Bolsas</a>
+					<a href="#" class="category-item">Berimbau</a>
+				</div>
+			</div>
+			<h1 class="logo">Roda de Estilo</h1>
+			<div class="header-right">
+				<a href="index.html" class="continue-button">🏠 Voltar à Loja</a>
+			</div>
+		</div>
+	</header>
+
+	<main class="admin-page">
+		<div class="container admin-box">
+			<h1>⚙️ Painel Administrativo</h1>
+
+			<!-- LOGIN SECTION -->
+			<div id="loginSection" class="login-box">
+				<h2>🔐 Login do Administrador</h2>
+				<label>
+					<strong>👤 Usuário</strong>
+					<input type="text" id="adminUser" placeholder="Digite o usuário" autocomplete="off">
+				</label>
+				<label>
+					<strong>🔑 Senha</strong>
+					<input type="password" id="adminPass" placeholder="Digite a senha" autocomplete="off">
+				</label>
+				<div class="admin-form-actions">
+					<button id="loginButton" class="save" type="button">✅ Entrar</button>
+				</div>
+			</div>
+
+			<!-- MANAGE SECTION -->
+			<div id="manageSection" class="admin-manager hidden">
+				<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+					<h2>Gerenciar Produtos</h2>
+					<button id="logoutButton" class="logout-button" type="button">🚪 Sair</button>
+				</div>
+
+			<div style="margin-bottom:24px; display:flex; gap:12px; flex-wrap:wrap;">
+				<button id="featuredTabBtn" class="save" type="button" style="width:auto;padding:12px 24px;">
+					Destaques da Semana
+				</button>
+				<button id="bestTabBtn" class="cancel" type="button" style="width:auto;padding:12px 24px;">
+					Mais Vendidos
+				</button>
+				<button id="addProductBtn" class="save" type="button" style="width:auto;padding:12px 24px;">
+					+ Adicionar Novo Produto
+				</button>
+			</div>
+
+			<h3>Cards visíveis na loja</h3>
+			<p class="hint">Selecione a seção para editar. Destaques e mais vendidos são gerenciados separadamente.</p>
+
+			<div id="adminGrid" class="admin-grid"></div>
+
+				<!-- EDIT FORM -->
+				<div class="admin-form">
+					<h3>Editar Produto</h3>
+					<input type="hidden" id="productIndex">
+
+					<label>
+						<strong>Nome do Produto *</strong>
+						<input type="text" id="productName" placeholder="Ex: Vestido Longo Rosa" required>
+					</label>
+
+					<label>
+						<strong>Preço (R$) *</strong>
+						<input type="number" step="0.01" id="productPrice" placeholder="Ex: 129.90" required>
+					</label>
+
+					<label>
+						<strong>Preço Original (R$)</strong>
+						<input type="number" step="0.01" id="productOldPrice" placeholder="Ex: 169.90">
+					</label>
+
+					<label>
+						<strong>Quantidade em estoque *</strong>
+						<input type="number" id="productQty" min="0" step="1" value="1" required>
+					</label>
+
+					<label>
+						<strong>Imagem do produto (URL ou arquivo local) *</strong>
+						<input type="text" id="productImage" placeholder="Cole a URL da imagem ou use o upload abaixo">
+					</label>
+
+					<label>
+						<strong>Enviar imagem do celular</strong>
+						<input type="file" id="productImageFile" accept="image/*">
+					</label>
+
+					<label>
+						<strong>Descrição do produto</strong>
+						<textarea id="productDescription" rows="4" placeholder="Descreva o produto, material e detalhes"></textarea>
+					</label>
+
+					<label>
+						<strong>Tamanhos disponíveis</strong>
+						<input type="text" id="productSizes" placeholder="Ex: P, M, G, GG">
+					</label>
+
+					<label>
+						<strong>Cores (códigos hex separados por vírgula)</strong>
+						<input type="text" id="productColors" placeholder="Ex: #000000, #FFFFFF, #C89B3C">
+					</label>
+
+					<label>
+						<strong>Categoria</strong>
+						<select id="productCategory">
+							<option value="">Sem categoria</option>
+							<option value="Vestidos">Vestidos</option>
+							<option value="Blusas">Blusas</option>
+							<option value="Macacões">Macacões</option>
+							<option value="Shorts">Shorts</option>
+							<option value="Saias">Saias</option>
+							<option value="Bolsas">Bolsas</option>
+							<option value="Sapatos">Sapatos</option>
+							<option value="Acessórios">Acessórios</option>
+						</select>
+					</label>
+
+					<label>
+						<strong>Tipo de Animação</strong>
+						<select id="productMotion">
+							<option value="static">Estático</option>
+							<option value="float">Flutuante</option>
+						</select>
+					</label>
+
+					<label>
+						<strong>Galeria de Imagens</strong>
+						<div id="imageGallery" class="image-gallery"></div>
+					</label>
+
+					<div class="admin-form-actions">
+						<button id="saveProductBtn" class="save" type="button">💾 Salvar Produto</button>
+						<button id="deleteProductBtn" class="cancel" type="button" style="display:none;">🗑️ Deletar</button>
+						<button id="cancelEditBtn" class="cancel" type="button">❌ Cancelar</button>
+					</div>
+				</div>
+
+				<div class="section-image-manager">
+					<h3>Imagens da seção ARTES</h3>
+					<p>Escolha uma imagem para cada card. Você pode alterar cada card separadamente.</p>
+					<div class="section-image-inputs">
+						<label>Card 1<input type="file" data-section-image-index="0" accept="image/*"></label>
+						<label>Card 2<input type="file" data-section-image-index="1" accept="image/*"></label>
+						<label>Card 3<input type="file" data-section-image-index="2" accept="image/*"></label>
+						<label>Card 4<input type="file" data-section-image-index="3" accept="image/*"></label>
+						<label>Card 5<input type="file" data-section-image-index="4" accept="image/*"></label>
+						<label>Card 6<input type="file" data-section-image-index="5" accept="image/*"></label>
+					</div>
+					<div id="categorySectionPreview" class="image-gallery" aria-live="polite"></div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer class="site-footer">
+		<div class="container footer-inner">
+			<div class="footer-brand">Roda de Estilo</div>
+			<div class="footer-credit">Com orgulho da cultura da capoeira</div>
+		</div>
+	</footer>
+
+</body>
+</html>
