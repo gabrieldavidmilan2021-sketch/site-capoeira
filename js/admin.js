@@ -91,6 +91,29 @@ async function syncStoreOnline() {
   }
 }
 
+async function loadStoreOnline() {
+  try {
+    const response = await fetch('/api/store', { cache: 'no-store' });
+    if (!response.ok) return;
+
+    const store = await response.json();
+    const values = [
+      [FEATURED_KEY, store.featuredProducts],
+      [BEST_KEY, store.bestSellers],
+      [PRODUCTS_KEY, store.lojaProducts],
+      [CATEGORY_SECTION_IMAGES_KEY, store.categorySectionImages]
+    ];
+
+    values.forEach(([key, value]) => {
+      if (localStorage.getItem(key) === null && Array.isArray(value)) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+    });
+  } catch {
+    // O painel continua usando os dados locais se a API estiver indisponível.
+  }
+}
+
 // Utils
 function $(sel) {
   return document.querySelector(sel);
@@ -521,7 +544,8 @@ featuredTabBtn.addEventListener('click', () => setAdminSection('featured'));
 bestTabBtn.addEventListener('click', () => setAdminSection('best'));
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadStoreOnline();
   renderImageGallery();
   renderCategorySectionPreview();
   setAdminSection('featured');
