@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Carrinho — Roda de Estilo</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script defer src="js/cart.js"></script>
+</head>
+<body>
+	<header class="site-header">
+		<div class="container header-inner">
+			<div class="header-left">
+				<button id="categoriesButton" class="btn-categories">Categorias</button>
+				<div id="categoryMenu" class="category-menu">
+					<a href="#" class="category-item">Camisetas</a>
+					<a href="#" class="category-item">Bonés</a>
+					<a href="#" class="category-item">Cordas</a>
+					<a href="#" class="category-item">Calças</a>
+					<a href="#" class="category-item">Acessórios</a>
+					<a href="#" class="category-item">Mochilas</a>
+					<a href="#" class="category-item">Bolsas</a>
+					<a href="#" class="category-item">Berimbau</a>
+				</div>
+			</div>
+			<h1 class="logo">Roda de Estilo</h1>
+			<div class="header-right">
+				<a href="index.html" class="continue-button">← Voltar</a>
+			</div>
+		</div>
+	</header>
+
+	<main class="cart-page">
+		<div class="container">
+			<div class="cart-header">
+				<h1>🛒 Meu Carrinho</h1>
+				<p class="cart-subtitle" id="cartSubtitle"></p>
+			</div>
+			
+			<div class="cart-layout">
+				<div class="cart-items-section">
+					<div class="cart-container" id="cartContainer"></div>
+					<div id="emptyMessage" class="empty-message" style="display:none;">
+						<div class="empty-icon">🛍️</div>
+						<h2>Seu carrinho está vazio</h2>
+						<p>Volte à loja e adicione seus itens favoritos!</p>
+						<a href="index.html" class="btn-continue-shopping">Continuar Comprando</a>
+					</div>
+				</div>
+
+				<aside class="cart-sidebar">
+					<div class="cart-summary">
+						<h3>Resumo do Pedido</h3>
+						<div class="summary-row">
+							<span>Subtotal</span>
+							<span id="subtotal">R$0,00</span>
+						</div>
+						<div class="summary-row">
+							<span>Frete</span>
+							<span id="shipping">Grátis</span>
+						</div>
+						<div class="summary-row">
+							<span>Desconto</span>
+							<span id="discount">R$0,00</span>
+						</div>
+						<div class="summary-divider"></div>
+						<div class="summary-row total">
+							<span>Total</span>
+							<span id="cartTotal">R$0,00</span>
+						</div>
+						
+						<button id="finishButton" class="btn-checkout" type="button">
+							Finalizar compra
+						</button>
+						<a href="index.html" class="btn-continue">
+							Continuar Comprando
+						</a>
+					</div>
+
+					<div class="cart-coupon">
+						<h4>Cupom de Desconto</h4>
+						<div class="coupon-form">
+							<input type="text" id="couponCode" placeholder="Cole seu cupom">
+							<button id="applyCoupon">Aplicar</button>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<div id="pixModal" class="pix-modal hidden" role="dialog" aria-modal="true" aria-labelledby="pixTitle">
+		<div class="pix-modal-content">
+			<button id="closePixModal" class="pix-close" type="button" aria-label="Fechar">×</button>
+			<h2 id="pixTitle">Pagamento via PIX</h2>
+			<p>Copie o código abaixo e efetue o pagamento no aplicativo do seu banco.</p>
+			<div class="pix-total">Total a pagar: <strong id="pixTotal">R$0,00</strong></div>
+			<label for="pixCode">PIX copia e cola</label>
+			<textarea id="pixCode" readonly rows="5" aria-label="Código PIX copia e cola"></textarea>
+			<button id="copyPixButton" class="btn-copy-pix" type="button">Copiar código PIX</button>
+			<p class="pix-note">Depois de pagar, confirme abaixo. A confirmação desta página não substitui a validação bancária.</p>
+			<button id="confirmPaymentButton" class="btn-checkout" type="button">Já fiz o pagamento</button>
+		</div>
+	</div>
+
+	<div id="checkoutModal" class="checkout-modal hidden" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+		<div class="checkout-modal-content">
+			<button id="closeCheckoutModal" class="checkout-close" type="button" aria-label="Fechar">×</button>
+			<h2 id="checkoutTitle">Dados para entrega</h2>
+			<p>Informe seu CEP para preencher o endereço automaticamente. Complete os campos que faltarem.</p>
+			<form id="checkoutForm">
+				<div class="checkout-grid">
+					<label>Nome completo<input id="customerName" autocomplete="name" required></label>
+					<label>Telefone<input id="customerPhone" inputmode="tel" autocomplete="tel" required></label>
+					<label>CEP<input id="customerCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" required></label>
+					<label>Estado<input id="customerState" autocomplete="address-level1" required></label>
+					<label class="checkout-wide">Rua / Avenida<input id="customerStreet" autocomplete="address-line1" required></label>
+					<label>Número<input id="customerNumber" inputmode="numeric" required></label>
+					<label>Complemento<input id="customerComplement" autocomplete="address-line2"></label>
+					<label>Bairro<input id="customerNeighborhood" required></label>
+					<label>Cidade<input id="customerCity" autocomplete="address-level2" required></label>
+				</div>
+				<p id="cepStatus" class="cep-status" aria-live="polite"></p>
+				<button class="btn-checkout" type="submit">Finalizar compra</button>
+			</form>
+		</div>
+	</div>
+
+	<footer class="site-footer">
+		<div class="container footer-inner">
+			<div class="footer-brand">Roda de Estilo</div>
+			<div class="footer-credit">Com orgulho da cultura da capoeira</div>
+		</div>
+	</footer>
+
+</body>
+</html>

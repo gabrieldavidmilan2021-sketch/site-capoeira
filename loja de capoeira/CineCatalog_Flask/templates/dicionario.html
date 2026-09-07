@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Dicionário | CineCatalog{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <span class="eyebrow">ESTRUTURA 02</span>
+    <h1>Cadastro com Dicionário</h1>
+    <p>Cadastre informações detalhadas sobre cada título.</p>
+</section>
+
+{% if mensagem %}
+<div class="alert">{{ mensagem }}</div>
+{% endif %}
+
+<section class="panel form-panel">
+    <h2>Novo cadastro</h2>
+
+    <form method="POST" class="form-grid">
+        <div>
+            <label for="nome">Título</label>
+            <input type="text" id="nome" name="nome" placeholder="Ex.: Interestelar" required>
+        </div>
+
+        <div>
+            <label for="genero">Gênero</label>
+            <input type="text" id="genero" name="genero" placeholder="Ex.: Ficção Científica" required>
+        </div>
+
+        <div>
+            <label for="ano">Ano</label>
+            <input type="number" id="ano" name="ano" min="1800" max="2100" placeholder="2024" required>
+        </div>
+
+        <div>
+            <label for="nota">Nota</label>
+            <input type="number" id="nota" name="nota" min="0" max="10" step="0.1" placeholder="8.5" required>
+        </div>
+
+        <button type="submit" class="btn primary form-button">Cadastrar</button>
+    </form>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <span class="eyebrow">CATÁLOGO</span>
+        <h2>Dados armazenados</h2>
+    </div>
+
+    <div class="movie-grid">
+        {% for nome, dados in catalogo.items() %}
+        <article class="movie-card">
+            <div class="movie-top">
+                <span class="movie-symbol">🎞️</span>
+                <span class="rating">★ {{ dados.nota }}</span>
+            </div>
+            <h3>{{ nome }}</h3>
+            <p>{{ dados.genero }}</p>
+            <div class="movie-meta">
+                <span>{{ dados.ano }}</span>
+                <span>Nota {{ dados.nota }}</span>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

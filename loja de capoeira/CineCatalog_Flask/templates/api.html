@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}API Externa | CineCatalog{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <span class="eyebrow">INTEGRAÇÃO</span>
+    <h1>Consulta à API externa</h1>
+    <p>Pesquise uma série e receba informações organizadas diretamente da API.</p>
+</section>
+
+<section class="panel api-panel">
+    <form method="POST" class="search-form">
+        <div class="search-input">
+            <label for="busca">Nome da série</label>
+            <input
+                type="text"
+                id="busca"
+                name="busca"
+                value="{{ busca }}"
+                placeholder="Ex.: Stranger Things"
+                required
+            >
+        </div>
+        <button type="submit" class="btn primary">🔎 Pesquisar</button>
+    </form>
+
+    <p class="api-note">
+        Fonte: TVMaze API • Requisição HTTP GET
+    </p>
+</section>
+
+{% if erro %}
+<div class="error-box">
+    <strong>Não foi possível realizar a consulta</strong>
+    <p>{{ erro }}</p>
+</div>
+{% endif %}
+
+{% if resultado %}
+<section class="result-card">
+    <div class="result-header">
+        <div>
+            <span class="badge">RESULTADO DA API</span>
+            <h2>{{ resultado.titulo }}</h2>
+        </div>
+        <div class="big-rating">★ {{ resultado.nota }}</div>
+    </div>
+
+    <div class="result-info">
+        <div><span>Gênero</span><strong>{{ resultado.genero }}</strong></div>
+        <div><span>Ano</span><strong>{{ resultado.ano }}</strong></div>
+        <div><span>Status</span><strong>{{ resultado.status }}</strong></div>
+        <div><span>Idioma</span><strong>{{ resultado.idioma }}</strong></div>
+    </div>
+
+    <div class="synopsis">
+        <h3>Sinopse</h3>
+        <p>{{ resultado.sinopse }}</p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

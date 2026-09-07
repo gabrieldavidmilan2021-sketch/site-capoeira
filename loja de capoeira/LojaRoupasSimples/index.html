@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Roda de Capoeira — Loja de Capoeira</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script defer src="js/script.js"></script>
+	</head>
+<body>
+	<header class="site-header">
+		<div class="container header-inner">
+			<div class="header-left">
+				<button id="categoriesButton" class="btn-categories">📂 Categorias</button>
+				<div id="categoryMenu" class="category-menu">
+					<a href="#" class="category-item">Camisetas</a>
+					<a href="#" class="category-item">Bonés</a>
+					<a href="#" class="category-item">Cordas</a>
+					<a href="#" class="category-item">Calças</a>
+					<a href="#" class="category-item">Acessórios</a>
+					<a href="#" class="category-item">Mochilas</a>
+					<a href="#" class="category-item">Bolsas</a>
+					<a href="#" class="category-item">Berimbau</a>
+				</div>
+			</div>
+			<h1 class="logo">Roda de Capoeira</h1>
+			<div class="header-right">
+				<div class="search-box">
+					<input type="search" id="searchInput" placeholder="🔍 Buscar peças da roda...">
+					<button id="searchButton" aria-label="Buscar">🔍</button>
+				</div>
+				<button id="cartButton" class="header-cart" aria-label="Ver carrinho">
+					<span class="cart-icon">🛒</span>
+					<span id="cartCount" class="cart-count">0</span>
+				</button>
+				<div class="user-avatar" id="userAvatar" title="Conta">
+					<img src="https://via.placeholder.com/42?text=R" alt="Usuário">
+				</div>
+				<a href="admin.html" class="continue-button" title="Painel administrativo">Painel da Roda</a>
+			</div>
+		</div>
+	</header>
+
+	<main class="fashion-home">
+		<section class="hero-showcase container">
+			<div class="hero-copy reveal-up">
+				<p class="eyebrow">CAPOEIRA É CULTURA</p>
+				<h1>Vista a energia da roda</h1>
+				<p class="hero-text">Uniformes, instrumentos e acessórios para quem vive a capoeira com respeito, movimento e identidade.</p>
+				<div class="hero-actions">
+					<a href="#destaques" class="primary-btn">COMPRAR AGORA</a>
+					<a href="#colecao" class="secondary-btn">VER PRODUTOS</a>
+				</div>
+				<div class="hero-meta">
+					<div>
+						<strong>53</strong>
+					<span>pedidos</span>
+					</div>
+					<div>
+						<strong>4.9/5</strong>
+						<span>avaliações</span>
+					</div>
+					<div>
+						<strong>Entrega</strong>
+						<span>Brasil</span>
+					</div>
+				</div>
+			</div>
+			<div class="hero-visual reveal-up">
+				<img src="https://nampur.com/wp-content/uploads/2025/10/CAPOEIRA-ITAPORANGA-08599-1366x2048-1.webp" />
+				<div class="floating-badge">GINGA</div>
+			</div>
+		</section>
+
+		<section class="section container">
+			<div class="section-head reveal-up">
+				<p class="eyebrow">EQUIPAMENTOS</p>
+				<h2>ENCONTRE O QUE PRECISA PARA A RODA</h2>
+			</div>
+			<div class="category-grid">
+				<article class="category-card reveal-up">
+					<img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m5n47uh25z1u63" />
+					<div class="category-overlay">
+						<span>camisetas de compressão personalizadas </span>
+						<a href="#">Ver coleção</a>
+					</div>
+				</article>
+				<article class="category-card reveal-up">
+					<img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTswNFNp-9eWHO_2eBQI8qY20mIme-TjkzCDeknv6hkYdyI_Paxqm34zXEXhp97NTCZc8DThXEqapiYDks8RME0nwLU8bxyXxhx4mFsWbHs-YODmHZOoCgWow" />
+					<div class="category-overlay">
+						<span>calça de capoeira personalizada</span>
+						<a href="#">Ver coleção</a>
+					</div>
+				</article>
+				<article class="category-card reveal-up">
+					<img src="https://down-br.img.susercontent.com/file/br-11134207-820m7-mm0zylqm80sgc9" />
+					<div class="category-overlay">
+						<span>camiseta manga longa personalizada</span>
+						<a href="#">Ver coleção</a>
+					</div>
+				</article>
+				<article class="category-card reveal-up">
+					<img src="https://down-br.img.susercontent.com/file/br-11134201-22120-ue01eab4oplvba" alt="Calças" />
+					<div class="category-overlay">
+						<span>Regata personalizadas </span>
+						<a href="#">Ver coleção</a>
+					</div>
+				</article>
+				<article class="category-card reveal-up">
+					<img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-lou0vj4z6c1x6b" alt="Shorts" />
+					<div class="category-overlay">
+						<span>croped personalizado</span>
+						<a href="#">Ver coleção</a>
+					</div>
+				</article>
+				<article class="category-card reveal-up">
+					<img src="https://down-br.img.susercontent.com/file/sg-11134201-8259d-mevfv685ucjrd8" alt="Shorts de capoeira" />
+					<div class="category-overlay">
+						<span>shorts personalizados</span>
+						<a href="#">Ver coleção</a>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section id="destaques" class="section container">
+			<div class="section-head reveal-up">
+				<p class="eyebrow">SELEÇÃO</p>
+				<h2>DESTAQUES DA SEMANA</h2>
+			</div>
+			<div id="featuredGrid" class="product-grid"></div>
+		</section>
+
+		<section id="colecao" class="collection-banner reveal-up">
+			<div class="collection-image"></div>
+			<div class="collection-content">
+				<p class="eyebrow light">LINHA CAPOEIRA</p>
+				<h2>Preparado para cada ginga.</h2>
+				<a href="#" class="cta-soft">CONHEÇA OS PRODUTOS</a>
+			</div>
+		</section>
+
+		<section class="section container">
+			<div class="section-head reveal-up">
+				<p class="eyebrow">POPULARES</p>
+				<h2>PRONTA ENTREGA
+				</h2>
+			</div>
+			<div id="bestGrid" class="product-grid"></div>
+		</section>
+
+		<section class="section container">
+			<div class="section-head reveal-up">
+				<p class="eyebrow">A RODA</p>
+				<h2>VIVA A CAPOEIRA</h2>
+			</div>
+			<div class="editorial-grid">
+				<div class="editorial-card tall reveal-up">
+					<img src="https://radis.ensp.fiocruz.br/wp-content/uploads/2025/02/Radis-269_Reportagem_Cultura-popular_Capoeira-e-saude_3.webp" />
+					<div class="editorial-copy">
+						<span>Cultura que se movimenta</span>
+					</div>
+				</div>
+				<div class="editorial-card medium reveal-up">
+					<img src="https://img.redbull.com/images/c_limit,w_1500,h_1000/f_auto,q_auto/redbullcom/2017/01/28/1331842024047_2/saiba-algumas-dicas-para-comecar-a-jogar-capoeira" alt="Capoeiristas em movimento" />
+					<div class="editorial-copy">
+						<span>Ginga, respeito e tradição</span>
+					</div>
+				</div>
+				<div class="editorial-card small reveal-up">
+					<img src="https://nampur.com/wp-content/uploads/2025/10/CAPOEIRA-ITAPORANGA-08599-1366x2048-1.webp" alt="Capoeirista na roda" />
+					<div class="editorial-copy">
+						<span>Corpo, música e movimento</span>
+					</div>
+				</div>
+				<div class="editorial-card medium reveal-up">
+					<img src="https://radis.ensp.fiocruz.br/wp-content/uploads/2025/02/Radis-269_Reportagem_Cultura-popular_Capoeira-e-saude_3.webp" alt="Roda de capoeira" />
+					<div class="editorial-copy">
+						<span>O som do berimbau chama</span>
+					</div>
+				</div>
+				<div class="editorial-card small reveal-up">
+					<img src="https://img.redbull.com/images/c_limit,w_1500,h_1000/f_auto,q_auto/redbullcom/2017/01/28/1331842024047_2/saiba-algumas-dicas-para-comecar-a-jogar-capoeira" alt="Capoeira em ação" />
+					<div class="editorial-copy">
+						<span>Mandinga em cada jogo</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="split-collection container reveal-up">
+			<div class="split-image">
+				<img src="https://radis.ensp.fiocruz.br/wp-content/uploads/2025/02/Radis-269_Reportagem_Cultura-popular_Capoeira-e-saude_3.webp" alt="Roda de capoeira" />
+			</div>
+			<div class="split-content">
+				<p class="eyebrow">NOSSA ESSÊNCIA</p>
+				<h2>Tradição, axé e movimento.</h2>
+				<p>Uma seleção para quem treina, ensina e celebra a capoeira dentro e fora da roda.</p>
+				<a href="#" class="primary-btn">VER AGORA</a>
+			</div>
+		</section>
+
+		<section class="section container">
+			<div class="section-head reveal-up">
+				<p class="eyebrow">MOSTRUARIO</p>
+				<h2>ARTES</h2>
+			</div>
+			<div class="lookbook-grid">
+				<a href="https://instagram.com" target="_blank" rel="noreferrer" class="lookbook-item reveal-up">
+					<img src="https://naoads/2025/10/CAPOEIRA-ITAPORANGA-08599-1366x2048-1.webp" alt="Capoeira em movimento" />
+					<div class="lookbook-hover"><span>◎ @rodadecapoeira</span></div>
+				</a>
+				<a href="https://instagram.com" target="_blank" rel="noreferrer" class="lookbook-item reveal-up">
+					<img src="https://radi.br/wp-content/uploads/2025/02/Radis-269_Reportagem_Cultura-popular_Capoeira-e-saude_3.webp" alt="Roda de capoeira" />
+					<div class="lookbook-hover"><span>◎ @rodadecapoeira</span></div>
+				</a>
+				<a href="https://instagram.com" target="_blank" rel="noreferrer" class="lookbook-item reveal-up">
+					<img src="https://img.o,q_auto/redbullcom/2017/01/28/1331842024047_2/saiba-algumas-dicas-para-comecar-a-jogar-capoeira" alt="Jogo de capoeira" />
+					<div class="lookbook-hover"><span>◎ @rodadecapoeira</span></div>
+				</a>
+				<a href="https://instagram.com" target="_blank" rel="noreferrer" class="lookbook-item reveal-up">
+					<img src="https://OEIRA-ITAPORANGA-08599-1366x2048-1.webp" alt="Capoeira em movimento" />
+					<div class="lookbook-hover"><span>◎ @rodadecapoeira</span></div>
+				</a>
+				<a href="https://instagram.com" target="_blank" rel="noreferrer" class="lookbook-item reveal-up">
+					<img src="https://radisagem_Cultura-popular_Capoeira-e-saude_3.webp" alt="Roda de capoeira" />
+					<div class="lookbook-hover"><span>◎ @rodadecapoeira</span></div>
+				</a>
+				<a href="https://instagram.com" target="_blank" rel="noreferrer" class="lookbook-item reveal-up">
+					<img src="https://img.redbull.1/28/1331842024047_2/saiba-algumas-dicas-para-comecar-a-jogar-capoeira" alt="Capoeira em ação" />
+					<div class="lookbook-hover"><span>◎ @rodadecapoeira</span></div>
+				</a>
+			</div>
+		</section>
+
+		<section class="benefits-strip">
+			<div class="container benefits-grid">
+				<div class="benefit-card reveal-up">
+					<div class="benefit-icon">🚚</div>
+					<div>
+						<h3>ENVIO PARA TODO O BRASIL</h3>
+						<p>Receba onde estiver</p>
+					</div>
+				</div>
+				<div class="benefit-card reveal-up">
+					<div class="benefit-icon">🔒</div>
+					<div>
+						<h3>COMPRA SEGURA</h3>
+						<p>Seus dados protegidos</p>
+					</div>
+				</div>
+				<div class="benefit-card reveal-up">
+					<div class="benefit-icon">💳</div>
+					<div>
+						<h3>PAGAMENTO FACILITADO</h3>
+						<p>Pix, cartão e outras opções</p>
+					</div>
+				</div>
+				<div class="benefit-card reveal-up">
+					<div class="benefit-icon">❤️</div>
+					<div>
+						<h3>FEITO PARA VOCÊ</h3>
+						<p>Feito para acompanhar sua ginga</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+	</main>
+
+	<button id="backTop" class="back-top" title="Voltar ao topo">↑</button>
+
+	<!-- Product detail modal -->
+	<div id="productModal" class="product-modal" aria-hidden="true">
+		<div class="product-modal-overlay" data-close></div>
+		<div class="product-modal-content" role="dialog" aria-modal="true">
+			<button class="product-modal-close" data-close aria-label="Fechar">✕</button>
+			<div class="modal-grid">
+				<div class="modal-image">
+					<img id="modalImage" src="" alt="">
+				</div>
+				<div class="modal-info">
+					<h2 id="modalName">Produto</h2>
+					<p id="modalPrice" class="modal-price">R$0,00</p>
+					<p id="modalDescription" class="modal-desc"></p>
+					<div class="modal-actions">
+						<button id="modalAddCart" class="buy-btn">Adicionar ao carrinho</button>
+						<button class="secondary-btn" data-close>Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="site-footer">
+		<div class="container footer-inner">
+			<div class="footer-brand-block">
+				<div class="footer-logo">Roda de Capoeira</div>
+				<p>Produtos para capoeiristas que valorizam tradição, conforto e liberdade de movimento.</p>
+			</div>
+			<div class="footer-links">
+				<div>
+					<h3>Links rápidos</h3>
+					<a href="#">Home</a>
+					<a href="#destaques">Destaques</a>
+					<a href="#colecao">Produtos</a>
+					<a href="#">Contato</a>
+				</div>
+				<div>
+					<h3>Categorias</h3>
+					<a href="#">Camisetas</a>
+					<a href="#">Calças de capoeira</a>
+					<a href="#">Cordas</a>
+					<a href="#">Instrumentos</a>
+				</div>
+				<div>
+					<h3>Atendimento</h3>
+					<a href="#">Central de ajuda</a>
+					<a href="#">Trocas e devoluções</a>
+					<a href="#">Envio</a>
+					<a href="#">FAQ</a>
+				</div>
+			</div>
+			<div class="footer-socials">
+				<h3>Redes sociais</h3>
+				<div class="social-list">
+					<a href="#">Instagram</a>
+					<a href="#">Pinterest</a>
+					<a href="#">TikTok</a>
+				</div>
+				<div class="payment-list">
+					<span>VISA</span>
+					<span>PIX</span>
+					<span>MASTER</span>
+				</div>
+			</div>
+		</div>
+		<div class="footer-bottom container">
+			<span>© 2026 Roda de Capoeira</span>
+			<span>Todos os direitos reservados</span>
+		</div>
+	</footer>
+
+	<script>
+		const carousel = document.getElementById('bestCarousel');
+		const prevBtn = document.querySelector('.carousel-nav.prev');
+		const nextBtn = document.querySelector('.carousel-nav.next');
+		if (carousel && prevBtn && nextBtn) {
+			prevBtn.addEventListener('click', () => carousel.scrollBy({ left: -320, behavior: 'smooth' }));
+			nextBtn.addEventListener('click', () => carousel.scrollBy({ left: 320, behavior: 'smooth' }));
+		}
+
+		const reveals = document.querySelectorAll('.reveal-up');
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+					observer.unobserve(entry.target);
+				}
+			});
+		}, { threshold: 0.15 });
+		reveals.forEach((el) => observer.observe(el));
+	</script>
+
+	</body>
+</html>
