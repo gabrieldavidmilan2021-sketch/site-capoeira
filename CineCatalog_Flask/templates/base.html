@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CineCatalog{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <span class="logo-icon">▶</span>
+                CineCatalog
+            </a>
+
+            <nav class="nav">
+                <a href="{{ url_for('index') }}">Início</a>
+                <a href="{{ url_for('vetor') }}">Vetor</a>
+                <a href="{{ url_for('dicionario') }}">Dicionário</a>
+                <a href="{{ url_for('api') }}">API</a>
+                <a href="{{ url_for('sobre') }}">Sobre</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>CineCatalog • Atividade 4 — Sistema Web com Flask</p>
+        <p>Desenvolvido para fins acadêmicos.</p>
+    </footer>
+</body>
+</html>

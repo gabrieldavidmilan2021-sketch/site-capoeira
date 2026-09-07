@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre | CineCatalog{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <span class="eyebrow">PROJETO</span>
+    <h1>Sobre o CineCatalog</h1>
+    <p>Aplicação desenvolvida para demonstrar conceitos de Flask e integração com API.</p>
+</section>
+
+<div class="about-grid">
+    <section class="panel">
+        <div class="card-icon">💻</div>
+        <h2>Tecnologias utilizadas</h2>
+        <ul class="tech-list">
+            <li><strong>Python</strong> — linguagem principal</li>
+            <li><strong>Flask</strong> — framework web</li>
+            <li><strong>HTML5</strong> — estrutura das páginas</li>
+            <li><strong>CSS3</strong> — design e responsividade</li>
+            <li><strong>Requests</strong> — comunicação com a API</li>
+            <li><strong>TVMaze API</strong> — fonte externa de dados</li>
+        </ul>
+    </section>
+
+    <section class="panel">
+        <div class="card-icon">🎯</div>
+        <h2>Objetivo</h2>
+        <p>
+            Demonstrar uma aplicação web em Flask capaz de combinar
+            armazenamento local em memória com o consumo de uma API pública.
+        </p>
+
+        <div class="objective">
+            <span>✓</span>
+            <p>Rotas GET e POST</p>
+        </div>
+        <div class="objective">
+            <span>✓</span>
+            <p>Vetor em memória</p>
+        </div>
+        <div class="objective">
+            <span>✓</span>
+            <p>Dicionário estruturado</p>
+        </div>
+        <div class="objective">
+            <span>✓</span>
+            <p>Tratamento de erros da API</p>
+        </div>
+    </section>
+</div>
+
+<section class="credits">
+    <h2>Atividade 4 — Sistema Web com Flask</h2>
+    <p>Catálogo Integrado a uma API</p>
+    <p class="student">Aluno(a): __________________________________________</p>
+</section>
+{% endblock %}

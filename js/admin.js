@@ -139,14 +139,15 @@ function getAllProducts() {
 
 function saveSectionProducts(section, products) {
   const normalized = products.map(normalizeProductRecord);
+  const featured = section === 'best' ? getSectionProducts('featured') : normalized;
+  const best = section === 'best' ? normalized : getSectionProducts('best');
 
-  if (section === 'best') {
-    localStorage.setItem(BEST_KEY, JSON.stringify(normalized));
-    syncStoreOnline();
-    return;
-  }
-
-  localStorage.setItem(FEATURED_KEY, JSON.stringify(normalized));
+  localStorage.setItem(FEATURED_KEY, JSON.stringify(featured));
+  localStorage.setItem(BEST_KEY, JSON.stringify(best));
+  localStorage.setItem(PRODUCTS_KEY, JSON.stringify([...featured, ...best].map(product => ({
+    ...product,
+    image: product.img
+  }))));
   syncStoreOnline();
 }
 

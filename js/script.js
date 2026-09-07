@@ -24,8 +24,7 @@ function getStoredProducts(key, fallback) {
     const stored = localStorage.getItem(key);
     if (stored === null) return fallback;
     const raw = JSON.parse(stored);
-    if (!Array.isArray(raw) || raw.length === 0) return fallback;
-    return raw;
+    return Array.isArray(raw) ? raw : fallback;
   } catch {
     return fallback;
   }
@@ -185,16 +184,16 @@ async function loadStoreFromServer() {
     const response = await fetch('/api/store', { cache: 'no-store' });
     if (!response.ok) return;
     const store = await response.json();
-    if (Array.isArray(store.featuredProducts) && store.featuredProducts.length) {
+    if (Array.isArray(store.featuredProducts)) {
       writeStorage('featuredProducts', store.featuredProducts);
       featuredProducts = store.featuredProducts.map(normalizeProduct);
     }
-    if (Array.isArray(store.bestSellers) && store.bestSellers.length) {
+    if (Array.isArray(store.bestSellers)) {
       writeStorage('bestSellers', store.bestSellers);
       bestSellers = store.bestSellers.map(normalizeProduct);
     }
-    if (Array.isArray(store.lojaProducts) && store.lojaProducts.length) writeStorage('lojaProducts', store.lojaProducts);
-    if (Array.isArray(store.categorySectionImages) && store.categorySectionImages.length) writeStorage('categorySectionImages', store.categorySectionImages);
+    if (Array.isArray(store.lojaProducts)) writeStorage('lojaProducts', store.lojaProducts);
+    if (Array.isArray(store.categorySectionImages)) writeStorage('categorySectionImages', store.categorySectionImages);
     renderFeatured();
     renderBest();
     applyCategorySectionImages();
@@ -688,8 +687,8 @@ function applyCategorySectionImages() {
 window.addEventListener('storage', event => {
   if (event.key !== 'featuredProducts' && event.key !== 'bestSellers') return;
 
-  featuredProducts = JSON.parse(localStorage.getItem('featuredProducts') || JSON.stringify(defaultFeatured)).map(normalizeProduct);
-  bestSellers = JSON.parse(localStorage.getItem('bestSellers') || JSON.stringify(defaultBest)).map(normalizeProduct);
+  featuredProducts = getStoredProducts('featuredProducts', defaultFeatured).map(normalizeProduct);
+  bestSellers = getStoredProducts('bestSellers', defaultBest).map(normalizeProduct);
   renderFeatured();
   renderBest();
   lazyLoadImages();

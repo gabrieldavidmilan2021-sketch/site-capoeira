@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Vetor | CineCatalog{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <span class="eyebrow">ESTRUTURA 01</span>
+    <h1>Cadastro com Vetor</h1>
+    <p>Adicione títulos à lista armazenada em memória.</p>
+</section>
+
+{% if mensagem %}
+<div class="alert">{{ mensagem }}</div>
+{% endif %}
+
+<div class="two-columns">
+    <section class="panel">
+        <h2>Adicionar título</h2>
+        <p class="muted">O item será inserido no vetor <code>filmes</code>.</p>
+
+        <form method="POST">
+            <label for="nome">Nome do filme ou série</label>
+            <input type="text" id="nome" name="nome" placeholder="Ex.: Interestelar" required>
+            <button type="submit" class="btn primary full">Adicionar ao vetor</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-title">
+            <h2>Itens cadastrados</h2>
+            <span class="counter">{{ filmes|length }} itens</span>
+        </div>
+
+        <div class="list">
+            {% for filme in filmes %}
+            <div class="list-item">
+                <span class="number">{{ loop.index }}</span>
+                <span>{{ filme }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}
