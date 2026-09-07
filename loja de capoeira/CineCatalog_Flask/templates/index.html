@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Início | CineCatalog{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-text">
+        <span class="badge">FLASK + API</span>
+        <h1>Seu catálogo de filmes e séries em um só lugar.</h1>
+        <p>
+            Uma aplicação web desenvolvida em Flask que demonstra
+            armazenamento em memória com vetores e dicionários,
+            além do consumo de uma API externa.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{{ url_for('vetor') }}" class="btn primary">Explorar catálogo</a>
+            <a href="{{ url_for('api') }}" class="btn secondary">Consultar API</a>
+        </div>
+    </div>
+
+    <div class="hero-card">
+        <div class="clapper">🎬</div>
+        <h2>CineCatalog</h2>
+        <p>Organize, cadastre e pesquise conteúdos.</p>
+        <div class="mini-stats">
+            <div><strong>3+</strong><span>Rotas</span></div>
+            <div><strong>API</strong><span>Externa</span></div>
+            <div><strong>100%</strong><span>Flask</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <span class="eyebrow">RECURSOS</span>
+        <h2>O que você pode fazer?</h2>
+    </div>
+
+    <div class="cards">
+        <a href="{{ url_for('vetor') }}" class="card">
+            <div class="card-icon">📋</div>
+            <h3>Cadastro com Vetor</h3>
+            <p>Adicione títulos a uma lista em memória e visualize todos os itens cadastrados.</p>
+        </a>
+
+        <a href="{{ url_for('dicionario') }}" class="card">
+            <div class="card-icon">🗂️</div>
+            <h3>Cadastro com Dicionário</h3>
+            <p>Armazene nome, gênero, ano e nota de forma estruturada.</p>
+        </a>
+
+        <a href="{{ url_for('api') }}" class="card">
+            <div class="card-icon">🌐</div>
+            <h3>Consulta à API</h3>
+            <p>Pesquise séries em uma API pública e veja os dados tratados na tela.</p>
+        </a>
+    </div>
+</section>
+{% endblock %}
