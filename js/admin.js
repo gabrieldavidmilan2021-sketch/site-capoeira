@@ -85,9 +85,11 @@ function getStorePayload() {
 
 async function syncStoreOnline() {
   try {
-    await fetch('/api/store', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(getStorePayload()) });
+    const response = await fetch('/api/store', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(getStorePayload()) });
+    return response.ok;
   } catch {
     // A loja continua utilizável localmente se o servidor estiver indisponível.
+    return false;
   }
 }
 
@@ -105,9 +107,7 @@ async function loadStoreOnline() {
     ];
 
     values.forEach(([key, value]) => {
-      if (localStorage.getItem(key) === null && Array.isArray(value)) {
-        localStorage.setItem(key, JSON.stringify(value));
-      }
+      if (Array.isArray(value)) localStorage.setItem(key, JSON.stringify(value));
     });
   } catch {
     // O painel continua usando os dados locais se a API estiver indisponível.
@@ -160,7 +160,7 @@ function getAllProducts() {
   return [...getSectionProducts('featured'), ...getSectionProducts('best')];
 }
 
-function saveSectionProducts(section, products) {
+async function saveSectionProducts(section, products) {
   const normalized = products.map(normalizeProductRecord);
   const featured = section === 'best' ? getSectionProducts('featured') : normalized;
   const best = section === 'best' ? normalized : getSectionProducts('best');
@@ -171,11 +171,11 @@ function saveSectionProducts(section, products) {
     ...product,
     image: product.img
   }))));
-  syncStoreOnline();
+  return syncStoreOnline();
 }
 
 // Save products back to storage
-function saveAllProducts(allProducts = []) {
+async function saveAllProducts(allProducts = []) {
   const normalized = allProducts.map(normalizeProductRecord);
 
   const featured = normalized.filter(product => product.id.startsWith('f'));
@@ -188,7 +188,7 @@ function saveAllProducts(allProducts = []) {
     image: product.img,
     description: product.description || ''
   }))));
-  syncStoreOnline();
+  return syncStoreOnline();
 }
 
 // Set admin mode
@@ -425,7 +425,7 @@ cancelEditBtn.addEventListener('click', () => {
 });
 
 // Event: Save product
-saveProductBtn.addEventListener('click', () => {
+saveProductBtn.addEventListener('click', async () => {
   const sectionProducts = getSectionProducts(activeAdminSection);
   const index = productIndex.value !== '' ? Number(productIndex.value) : -1;
   const name = productName.value.trim();
@@ -478,14 +478,14 @@ saveProductBtn.addEventListener('click', () => {
     updatedSectionProducts.push(productData);
   }
 
-  saveSectionProducts(activeAdminSection, updatedSectionProducts);
+  const savedOnline = await saveSectionProducts(activeAdminSection, updatedSectionProducts);
   renderAdminProducts(activeAdminSection);
   clearForm();
-  showMessage('✅ Produto salvo com sucesso!');
+  showMessage(savedOnline ? '✅ Produto salvo para todos os usuários!' : '⚠️ Salvo apenas neste navegador. Verifique se o servidor está online.');
 });
 
 // Event: Delete product
-deleteProductBtn.addEventListener('click', () => {
+deleteProductBtn.addEventListener('click', async () => {
   const index = productIndex.value !== '' ? Number(productIndex.value) : -1;
 
   if (index < 0 || !confirm('Tem certeza que deseja deletar este produto?')) {
@@ -495,10 +495,10 @@ deleteProductBtn.addEventListener('click', () => {
   const sectionProducts = getSectionProducts(activeAdminSection);
   const updatedSectionProducts = [...sectionProducts];
   updatedSectionProducts.splice(index, 1);
-  saveSectionProducts(activeAdminSection, updatedSectionProducts);
+  const savedOnline = await saveSectionProducts(activeAdminSection, updatedSectionProducts);
   renderAdminProducts(activeAdminSection);
   clearForm();
-  showMessage('✅ Produto deletado com sucesso!');
+  showMessage(savedOnline ? '✅ Produto deletado para todos os usuários!' : '⚠️ Deletado apenas neste navegador. Verifique se o servidor está online.');
 });
 
 // Categories menu
