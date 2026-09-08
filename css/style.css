@@ -1827,6 +1827,247 @@ html{scroll-behavior:smooth}
   resize:vertical;
 }
 
+/* ======== REFINED CAPOEIRA THEME ======== */
+:root{
+  --bg:#f3efe8;
+  --surface:#fffdf9;
+  --muted:#e5ded3;
+  --accent:#a84f2b;
+  --accent-2:#d69a49;
+  --text:#242320;
+  --muted-text:#706b63;
+  --deep-green:#173c37;
+  --forest:#255950;
+  --radius:16px;
+}
+
+body{
+  background:#f3efe8;
+  color:var(--text);
+}
+
+.site-header{
+  background:rgba(23,60,55,0.97);
+  border-bottom:1px solid rgba(214,154,73,0.38);
+  box-shadow:0 10px 30px rgba(30,35,31,0.16);
+}
+
+.logo{color:#f2c777;text-shadow:0 2px 12px rgba(214,154,73,0.2)}
+
+.search-box{
+  background:#fbf8f2;
+  border:1px solid rgba(214,154,73,0.2);
+}
+
+.search-box button,
+.header-cart,
+.btn-categories{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fffaf4;
+  box-shadow:0 5px 15px rgba(101,49,29,0.18);
+}
+
+.search-box button:hover,
+.header-cart:hover,
+.btn-categories:hover,
+.buy-btn:hover,
+.admin-card-body button:hover,
+.edit-btn:hover,
+.admin-form-actions button.save:hover{
+  background:#873d22;
+}
+
+.cart-count{background:var(--accent-2);color:#302116}
+
+.continue-button{
+  color:#f2c777;
+  border-color:rgba(242,199,119,0.6);
+}
+
+.continue-button:hover{background:var(--accent-2);color:#173c37}
+
+.category-menu{
+  background:#fffdf9;
+  border:1px solid #e4d9c9;
+  box-shadow:0 16px 36px rgba(29,35,31,0.16);
+}
+
+.category-item:hover{background:#f0e5d6;color:var(--deep-green)}
+
+.fashion-home{background:#f3efe8}
+
+.eyebrow{color:var(--accent)}
+
+.hero-copy h1,
+.section-head h2,
+.split-content h2,
+.product-info h3,
+.hero-meta strong{color:#242320}
+
+.hero-text,
+.split-content p{color:#625e56}
+
+.hero-visual img{box-shadow:0 36px 80px rgba(30,35,31,0.2)}
+
+.floating-badge{
+  background:rgba(23,60,55,0.92);
+  color:#f8d28e;
+  border:1px solid rgba(242,199,119,0.35);
+}
+
+.primary-btn,
+.offer-btn,
+.newsletter-form button,
+.buy-btn{
+  background:var(--accent);
+  box-shadow:0 12px 30px rgba(101,49,29,0.2);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.cta-soft:hover,
+.offer-btn:hover,
+.newsletter-form button:hover,
+.buy-btn:hover{box-shadow:0 18px 30px rgba(101,49,29,0.22)}
+
+.secondary-btn,
+.cta-soft{
+  border-color:#d5c8b7;
+  background:#fffaf3;
+  color:#244b45;
+}
+
+.category-card,
+.product-card,
+.split-collection,
+.newsletter-box,
+.benefit-card,
+.mini-product{
+  background:#fffdf9;
+  border-color:#e3d9cc;
+  box-shadow:0 18px 38px rgba(52,45,36,0.08);
+}
+
+.category-card{border-radius:18px}
+.category-overlay{background:linear-gradient(180deg,transparent 18%,rgba(23,30,27,0.82) 100%)}
+.category-card:hover .category-overlay{background:linear-gradient(180deg,rgba(23,30,27,0.18),rgba(23,30,27,0.88))}
+
+.product-media{background:#e9e1d6}
+.tag.sale{background:#f1d8c5;color:#7e3c26}
+.tag.new{background:#d7e5dc;color:#24554a}
+.price,.modal-price,.count{color:var(--accent)}
+.product-info{background:#fffdf9}
+
+.collection-banner{box-shadow:0 24px 60px rgba(31,41,36,0.16)}
+.collection-banner::before{background:linear-gradient(90deg,rgba(17,45,41,0.78),rgba(17,45,41,0.16))}
+.collection-content .cta-soft{background:rgba(255,250,243,0.14);color:#fff7e9;border-color:rgba(255,240,208,0.42)}
+
+.editorial-card,
+.lookbook-item{box-shadow:0 20px 40px rgba(31,41,36,0.12)}
+
+.benefits-strip{
+  background:#e6ded2;
+  border-color:#d8cbbb;
+}
+
+.benefit-card{background:rgba(255,253,249,0.82)}
+.benefit-icon{background:#f7efe4;color:var(--accent)}
+.benefit-card p{color:#625e56}
+
+.site-footer{background:#173c37;color:#f7f0e5}
+.footer-logo{color:#f2c777}
+.footer-links a,.footer-socials a,.footer-brand-block p,.footer-socials span,.footer-bottom{color:rgba(250,244,234,0.72)}
+.footer-links a:hover,.footer-socials a:hover{color:#f2c777}
+.payment-list span{background:rgba(242,199,119,0.1);border-color:rgba(242,199,119,0.2);color:#f2c777}
+
+.product-modal-content,
+.login-box,
+.admin-manager,
+.cart-summary,
+.cart-coupon{background:#fffdf9;border-color:#e3d9cc}
+
+.login-box{box-shadow:0 20px 48px rgba(36,35,32,0.12)}
+.login-box h2{color:var(--deep-green)}
+.login-box .hint{color:#625e56;background:#f4eadf}
+.login-box input,.admin-form input,.admin-form textarea,.admin-form select{border-color:#d8cbbb;background:#fffaf3}
+.login-box input:focus,.admin-form input:focus,.admin-form textarea:focus,.admin-form select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(168,79,43,0.12)}
+.admin-card{background:#f4eee6}
+.admin-card-body button,.edit-btn,.admin-form-actions button.save{background:var(--accent)}
+.admin-form-actions button.cancel,.logout-button{background:#e9e1d6;color:#3e3b36}
+.admin-form-actions button.cancel:hover,.logout-button:hover{background:#dcd0c1}
+
+/* ======== MONOCHROME PREMIUM PALETTE ======== */
+:root{
+  --bg:#ededeb;
+  --surface:#ffffff;
+  --muted:#dededb;
+  --accent:#202020;
+  --accent-2:#b8b8b3;
+  --text:#171717;
+  --muted-text:#666663;
+  --deep-green:#171717;
+  --forest:#30302e;
+}
+
+body,.fashion-home{background:#ededeb;color:#171717}
+
+.site-header{background:rgba(22,22,22,0.98);border-bottom:1px solid #444;box-shadow:0 10px 30px rgba(0,0,0,0.18)}
+.logo{color:#f5f5f2;text-shadow:none}
+
+.search-box{background:#f7f7f5;border-color:#555}
+.search-box button,.header-cart,.btn-categories{background:#f5f5f2;border-color:#f5f5f2;color:#171717;box-shadow:0 5px 15px rgba(0,0,0,0.2)}
+.search-box button:hover,.header-cart:hover,.btn-categories:hover,.buy-btn:hover,.admin-card-body button:hover,.edit-btn:hover,.admin-form-actions button.save:hover{background:#bdbdb8;color:#171717}
+.cart-count{background:#bdbdb8;color:#171717}
+.continue-button{color:#f5f5f2;border-color:#8b8b87}
+.continue-button:hover{background:#f5f5f2;color:#171717}
+
+.category-menu{background:#fff;border-color:#d2d2ce;box-shadow:0 16px 36px rgba(0,0,0,0.18)}
+.category-item:hover{background:#ededeb;color:#171717}
+
+.eyebrow{color:#666663}
+.hero-copy h1,.section-head h2,.split-content h2,.product-info h3,.hero-meta strong{color:#171717}
+.hero-text,.split-content p,.benefit-card p{color:#5f5f5b}
+.floating-badge{background:rgba(20,20,20,0.92);color:#fff;border-color:#888}
+
+.primary-btn,.offer-btn,.newsletter-form button,.buy-btn{background:#202020;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,0.2)}
+.primary-btn:hover,.secondary-btn:hover,.cta-soft:hover,.offer-btn:hover,.newsletter-form button:hover,.buy-btn:hover{box-shadow:0 18px 30px rgba(0,0,0,0.24)}
+.secondary-btn,.cta-soft{border-color:#bdbdb8;background:#fff;color:#202020}
+
+.category-card,.product-card,.split-collection,.newsletter-box,.benefit-card,.mini-product{background:#fff;border-color:#d7d7d3;box-shadow:0 18px 38px rgba(0,0,0,0.08)}
+.category-overlay{background:linear-gradient(180deg,transparent 18%,rgba(12,12,12,0.86) 100%)}
+.category-card:hover .category-overlay{background:linear-gradient(180deg,rgba(12,12,12,0.18),rgba(12,12,12,0.9))}
+.product-media{background:#e1e1de}
+.tag.sale{background:#e2e2de;color:#30302e}
+.tag.new{background:#d3d3cf;color:#242424}
+.price,.modal-price,.count{color:#202020}
+
+.collection-banner::before{background:linear-gradient(90deg,rgba(10,10,10,0.82),rgba(10,10,10,0.2))}
+.collection-content .cta-soft{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.42)}
+.editorial-card,.lookbook-item{box-shadow:0 20px 40px rgba(0,0,0,0.12)}
+
+.benefits-strip{background:#dededb;border-color:#c9c9c5}
+.benefit-card{background:rgba(255,255,255,0.82)}
+.benefit-icon{background:#ededeb;color:#202020}
+
+.site-footer{background:#181818;color:#f5f5f2}
+.footer-logo{color:#fff}
+.footer-links a,.footer-socials a,.footer-brand-block p,.footer-socials span,.footer-bottom{color:rgba(255,255,255,0.7)}
+.footer-links a:hover,.footer-socials a:hover{color:#fff}
+.payment-list span{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);color:#fff}
+
+.product-modal-content,.login-box,.admin-manager,.cart-summary,.cart-coupon{background:#fff;border-color:#d7d7d3}
+.login-box h2{color:#202020}
+.login-box .hint{color:#666663;background:#ededeb}
+.login-box input,.admin-form input,.admin-form textarea,.admin-form select{border-color:#c8c8c4;background:#fafaf8}
+.login-box input:focus,.admin-form input:focus,.admin-form textarea:focus,.admin-form select:focus{border-color:#202020;box-shadow:0 0 0 4px rgba(32,32,32,0.12)}
+.admin-card{background:#ededeb}
+.admin-card-body button,.edit-btn,.admin-form-actions button.save{background:#202020}
+.admin-form-actions button.cancel,.logout-button{background:#e1e1de;color:#30302e}
+.admin-form-actions button.cancel:hover,.logout-button:hover{background:#cfcfcb}
+
+.site-header button,.benefit-icon,.user-avatar img{filter:grayscale(1)}
+
 .admin-form-actions{
   display:flex;
   gap:14px;
