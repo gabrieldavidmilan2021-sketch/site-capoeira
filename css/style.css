@@ -449,17 +449,6 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
 
 .card .info{
   padding:14px;
-  display:flex;
-  flex-direction:column;
-  min-height:210px;
-}
-
-.card-kicker{
-  color:var(--accent-2);
-  font-size:.68rem;
-  font-weight:800;
-  letter-spacing:.12em;
-  text-transform:uppercase;
 }
 
 .card .title{
@@ -467,14 +456,6 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   margin:0 0 6px;
   font-size:0.95rem;
   line-height:1.3;
-}
-
-.card-description{
-  color:var(--muted-text);
-  font-size:.84rem;
-  line-height:1.45;
-  margin:0 0 4px;
-  min-height:2.45em;
 }
 
 .card .prices{
@@ -502,15 +483,6 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   text-transform:uppercase;
   color:var(--muted-text);
   font-weight:700;
-}
-
-.card .details-btn,
-.card .buy-btn{
-  margin-top:auto;
-}
-
-.card .details-btn + .buy-btn{
-  margin-top:8px;
 }
 
 .buy-btn:disabled{

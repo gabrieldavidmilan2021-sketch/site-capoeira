@@ -165,9 +165,7 @@ function productCardHTML(p){
         <button class="heart" aria-label="Favoritar" type="button">♡</button>
       </div>
       <div class="info">
-        <span class="card-kicker">${escapeProductText(safeProduct.category || 'Coleção Roda')}</span>
         <h3 class="title">${safeProduct.name}</h3>
-        <p class="card-description">${escapeProductText(safeProduct.description || 'Peça selecionada para acompanhar seu movimento com conforto e estilo.')}</p>
         <div class="prices">
           <del>R$${safeProduct.oldPrice?.toFixed(2).replace('.',',')||''}</del>
           <div class="price-now">R$${safeProduct.price.toFixed(2).replace('.',',')}</div>
