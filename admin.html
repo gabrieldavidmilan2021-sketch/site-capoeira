@@ -57,6 +57,20 @@
 					<button id="logoutButton" class="logout-button" type="button">🚪 Sair</button>
 				</div>
 
+				<section class="visit-metrics" aria-labelledby="visitMetricsTitle">
+					<div>
+						<p class="eyebrow">ACESSOS DA LOJA</p>
+						<h2 id="visitMetricsTitle">Visitas deste mês</h2>
+					</div>
+					<div class="visit-metrics-values">
+						<strong id="currentMonthVisits">0</strong>
+						<span>acessos</span>
+						<strong id="currentMonthVisitors">0</strong>
+						<span>visitantes</span>
+					</div>
+					<div id="visitHistory" class="visit-history"></div>
+				</section>
+
 			<div style="margin-bottom:24px; display:flex; gap:12px; flex-wrap:wrap;">
 				<button id="featuredTabBtn" class="save" type="button" style="width:auto;padding:12px 24px;">
 					Destaques da Semana
@@ -107,6 +121,16 @@
 					<label>
 						<strong>Enviar imagem do celular</strong>
 						<input type="file" id="productImageFile" accept="image/*">
+					</label>
+
+					<label>
+						<strong>Segunda imagem (opcional)</strong>
+						<input type="text" id="productImage2" placeholder="URL da segunda foto">
+					</label>
+
+					<label>
+						<strong>Enviar segunda imagem</strong>
+						<input type="file" id="productImageFile2" accept="image/*">
 					</label>
 
 					<label>

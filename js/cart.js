@@ -120,6 +120,7 @@ function updateCartDisplay() {
       <div class="cart-item-details">
         <h3>${item.name}</h3>
         <p>${formatPrice(item.price)}</p>
+        ${item.size ? `<p class="cart-item-size">Tamanho: ${item.size}</p>` : ''}
         <div class="cart-price">
           <span>Subtotal:</span>
           <span class="cart-item-price">${formatPrice(itemTotal)}</span>
@@ -228,7 +229,7 @@ function openPixCheckout() {
 function sendOrderNotification(cart = getCart()) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const total = subtotal - subtotal * (currentDiscount / 100);
-  const items = cart.map(item => `• ${item.qty}x ${item.name} — ${formatPrice(item.price * item.qty)}`).join('\n');
+  const items = cart.map(item => `• ${item.qty}x ${item.name}${item.size ? ` (Tamanho ${item.size})` : ''} — ${formatPrice(item.price * item.qty)}`).join('\n');
   const message = [
     'NOVO PEDIDO — PIX INFORMADO',
     `Data: ${new Date().toLocaleString('pt-BR')}`,

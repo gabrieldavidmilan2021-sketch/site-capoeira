@@ -55,6 +55,8 @@ const productOldPrice = document.getElementById('productOldPrice');
 const productQty = document.getElementById('productQty');
 const productImage = document.getElementById('productImage');
 const productImageFile = document.getElementById('productImageFile');
+const productImage2 = document.getElementById('productImage2');
+const productImageFile2 = document.getElementById('productImageFile2');
 const productDescription = document.getElementById('productDescription');
 const productSizes = document.getElementById('productSizes');
 const productColors = document.getElementById('productColors');
@@ -125,12 +127,17 @@ function formatPrice(value) {
 
 function normalizeProductRecord(product = {}) {
   const qty = Number(product.qty ?? product.quantity ?? 0);
+  const images = (Array.isArray(product.images) ? product.images : [product.img || product.image, product.image2])
+    .map(image => String(image || '').trim())
+    .filter((image, index, values) => image && values.indexOf(image) === index)
+    .slice(0, 2);
   return {
     id: product.id || `p${Date.now()}`,
     name: product.name || 'Novo Produto',
     price: Number(product.price) || 0,
     oldPrice: Number(product.oldPrice ?? product.price * 1.3 ?? 0),
-    img: product.img || product.image || '',
+    img: images[0] || '',
+    images,
     description: product.description || '',
     sizes: product.sizes || '',
     category: product.category || '',
@@ -202,6 +209,30 @@ function setAdminMode(isAdmin) {
     adminPass.value = '';
     loadAdminProducts();
     renderImageGallery();
+    loadVisitMetrics();
+  }
+}
+
+async function loadVisitMetrics() {
+  const visits = document.getElementById('currentMonthVisits');
+  const visitors = document.getElementById('currentMonthVisitors');
+  const history = document.getElementById('visitHistory');
+  if (!visits || !visitors || !history) return;
+
+  try {
+    const response = await fetch('/api/visits', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Não foi possível carregar as visitas');
+    const data = await response.json();
+    const months = Array.isArray(data.months) ? data.months : [];
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const current = months.find(item => item.month === currentMonth) || { visits: 0, visitors: 0 };
+    visits.textContent = current.visits.toLocaleString('pt-BR');
+    visitors.textContent = current.visitors.toLocaleString('pt-BR');
+    history.innerHTML = months.slice(0, 6).map(item => `
+      <div><span>${item.month}</span><strong>${item.visits.toLocaleString('pt-BR')} acessos</strong></div>
+    `).join('') || '<span>Nenhum acesso registrado ainda.</span>';
+  } catch {
+    history.innerHTML = '<span>Métricas indisponíveis no momento.</span>';
   }
 }
 
@@ -219,6 +250,8 @@ function clearForm() {
   productQty.value = '1';
   productImage.value = '';
   productImageFile.value = '';
+  productImage2.value = '';
+  productImageFile2.value = '';
   productDescription.value = '';
   productSizes.value = '';
   productColors.value = '';
@@ -231,9 +264,7 @@ function clearForm() {
 function handleImageSelection(file) {
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = event => {
-    const result = event.target.result;
+  optimizeProductImage(file).then(result => {
     productImage.value = result;
 
     const galleryThumbs = imageGallery.querySelectorAll('.image-thumb');
@@ -243,9 +274,30 @@ function handleImageSelection(file) {
     localThumb.className = 'image-thumb selected';
     localThumb.innerHTML = `<img src="${result}" alt="Imagem selecionada" loading="lazy">`;
     imageGallery.prepend(localThumb);
-  };
+  }).catch(() => showMessage('Não foi possível preparar esta imagem. Use JPG, PNG ou WEBP.'));
+}
 
-  reader.readAsDataURL(file);
+function optimizeProductImage(file) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) return reject(new Error('Arquivo inválido'));
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Falha ao ler a imagem'));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error('Imagem inválida'));
+      image.onload = () => {
+        const maxSize = 1400;
+        const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 function normalizeImageSource(value) {
@@ -323,7 +375,7 @@ function renderAdminProducts(section = activeAdminSection) {
 
   adminGrid.innerHTML = products.map((product, index) => `
     <div class="admin-card">
-      <img src="${product.img}" alt="${product.name}" loading="lazy">
+      <div class="admin-card-images">${(product.images?.length ? product.images : [product.img]).map(image => `<img src="${image}" alt="${product.name}" loading="lazy">`).join('')}</div>
       <div class="admin-card-body">
         <h3>${product.name}</h3>
         <p style="color:var(--accent);font-weight:700;margin:4px 0;">${formatPrice(product.price)}</p>
@@ -359,6 +411,7 @@ function loadProductToForm(index, section = activeAdminSection) {
   productOldPrice.value = product.oldPrice || '';
   productQty.value = product.qty ?? 1;
   productImage.value = product.img || '';
+  productImage2.value = product.images?.[1] || '';
   productDescription.value = product.description || '';
   productSizes.value = Array.isArray(product.sizes) ? product.sizes.join(', ') : (product.sizes || '');
   productColors.value = Array.isArray(product.colors) ? product.colors.join(', ') : '';
@@ -426,6 +479,7 @@ cancelEditBtn.addEventListener('click', () => {
 
 // Event: Save product
 saveProductBtn.addEventListener('click', async () => {
+  saveProductBtn.disabled = true;
   const sectionProducts = getSectionProducts(activeAdminSection);
   const index = productIndex.value !== '' ? Number(productIndex.value) : -1;
   const name = productName.value.trim();
@@ -433,6 +487,7 @@ saveProductBtn.addEventListener('click', async () => {
   const oldPrice = productOldPrice.value ? parseFloat(productOldPrice.value) : price * 1.3;
   const qty = Number(productQty.value);
   const img = normalizeImageSource(productImage.value);
+  const img2 = normalizeImageSource(productImage2.value);
   const category = productCategory.value || '';
   const motion = productMotion.value || 'static';
   const description = productDescription.value.trim();
@@ -441,18 +496,22 @@ saveProductBtn.addEventListener('click', async () => {
 
   if (!name) {
     showMessage('⚠️ Digite o nome do produto!');
+    saveProductBtn.disabled = false;
     return;
   }
   if (isNaN(price) || price <= 0) {
     showMessage('⚠️ Digite um preço válido!');
+    saveProductBtn.disabled = false;
     return;
   }
   if (!Number.isFinite(qty) || qty < 0) {
     showMessage('⚠️ Informe uma quantidade válida em estoque!');
+    saveProductBtn.disabled = false;
     return;
   }
   if (!img) {
     showMessage('⚠️ Coloque a URL da imagem ou envie um arquivo do celular!');
+    saveProductBtn.disabled = false;
     return;
   }
 
@@ -463,6 +522,7 @@ saveProductBtn.addEventListener('click', async () => {
     price,
     oldPrice,
     img,
+    images: [img, img2].filter((image, imageIndex, values) => image && values.indexOf(image) === imageIndex),
     category,
     motion,
     description,
@@ -481,6 +541,7 @@ saveProductBtn.addEventListener('click', async () => {
   const savedOnline = await saveSectionProducts(activeAdminSection, updatedSectionProducts);
   renderAdminProducts(activeAdminSection);
   clearForm();
+  saveProductBtn.disabled = false;
   showMessage(savedOnline ? '✅ Produto salvo para todos os usuários!' : '⚠️ Salvo apenas neste navegador. Verifique se o servidor está online.');
 });
 
@@ -522,6 +583,15 @@ productImageFile.addEventListener('change', (event) => {
   }
 });
 
+productImageFile2.addEventListener('change', (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+
+  optimizeProductImage(file).then(result => {
+    productImage2.value = result;
+  }).catch(() => showMessage('Não foi possível preparar a segunda imagem. Use JPG, PNG ou WEBP.'));
+});
+
 categorySectionImageInputs.forEach(input => {
   input.addEventListener('change', async event => {
     const [file] = event.target.files || [];
@@ -549,6 +619,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderImageGallery();
   renderCategorySectionPreview();
   setAdminSection('featured');
+  setInterval(async () => {
+    await loadStoreOnline();
+    if (sessionStorage.getItem('adminLogged') === 'true') {
+      renderAdminProducts();
+      renderCategorySectionPreview();
+    }
+  }, 2000);
   if (sessionStorage.getItem('adminLogged') === 'true') {
     setAdminMode(true);
   } else {

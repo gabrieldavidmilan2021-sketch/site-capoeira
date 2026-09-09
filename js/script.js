@@ -38,6 +38,8 @@ function normalizeProductImage(value) {
   return img;
 }
 
+const productImageFallback = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="800" viewBox="0 0 640 800"><rect width="640" height="800" fill="#dededb"/><text x="50%" y="50%" fill="#30302e" font-family="Arial" font-size="28" text-anchor="middle">Imagem indisponível</text></svg>');
+
 function normalizeProductName(value) {
   const name = String(value || '').trim();
   return name || 'Produto da Loja';
@@ -51,19 +53,25 @@ function normalizeProductPrice(value, fallback = 0) {
 // Load from localStorage or use defaults
 let featuredProducts = getStoredProducts('featuredProducts', defaultFeatured).map(normalizeProduct);
 let bestSellers = getStoredProducts('bestSellers', defaultBest).map(normalizeProduct);
+let lastServerStore = '';
 
 // Ensure products have all required fields
 function normalizeProduct(p = {}) {
   const qty = Number(p.qty ?? p.quantity ?? 10);
   const price = normalizeProductPrice(p.price, 0);
   const oldPrice = normalizeProductPrice(p.oldPrice, price ? price * 1.3 : 0);
+  const images = (Array.isArray(p.images) ? p.images : [p.img || p.image])
+    .map(normalizeProductImage)
+    .filter((image, index, values) => image && values.indexOf(image) === index)
+    .slice(0, 2);
 
   return {
     id: p.id || `p${Date.now()}`,
     name: normalizeProductName(p.name),
     price,
     oldPrice,
-    img: normalizeProductImage(p.img || p.image),
+    img: images[0] || normalizeProductImage(''),
+    images: images.length ? images : [normalizeProductImage('')],
     category: p.category || '',
     description: p.description || '',
     sizes: p.sizes || '',
@@ -147,12 +155,13 @@ function renderCategories(){
 
 function productCardHTML(p){
   const safeProduct = normalizeProduct(p);
-  const swatches = (safeProduct.colors||[]).map(c => `<span class="swatch" style="background:${c}" title="Cor"></span>`).join('');
   const isOutOfStock = Number(safeProduct.qty) <= 0;
+  const sizes = Array.isArray(safeProduct.sizes) ? safeProduct.sizes : String(safeProduct.sizes || '').split(',').map(size => size.trim()).filter(Boolean);
+  const imageMarkup = safeProduct.images.map((image, index) => `<img class="product-card-image ${index === 0 ? 'is-primary' : ''}" data-src="${escapeProductText(image)}" alt="${escapeProductText(safeProduct.name)} - foto ${index + 1}" loading="lazy" onerror="this.onerror=null;this.src='${productImageFallback}';this.removeAttribute('data-src')">`).join('');
   return `
     <article class="card fade-up ${safeProduct.motion==='float' ? 'card--float' : ''}" data-id="${safeProduct.id}" data-qty="${safeProduct.qty ?? 0}">
-      <div class="media">
-        <img data-src="${safeProduct.img}" alt="${safeProduct.name}" loading="lazy">
+      <div class="media product-card-gallery ${safeProduct.images.length > 1 ? 'has-secondary' : ''}">
+        ${imageMarkup}
         <button class="heart" aria-label="Favoritar" type="button">♡</button>
       </div>
       <div class="info">
@@ -161,8 +170,8 @@ function productCardHTML(p){
           <del>R$${safeProduct.oldPrice?.toFixed(2).replace('.',',')||''}</del>
           <div class="price-now">R$${safeProduct.price.toFixed(2).replace('.',',')}</div>
         </div>
-        <div class="color-swatches">${swatches}</div>
         <div class="stock-label">${isOutOfStock ? 'Esgotado' : `Estoque: ${safeProduct.qty}`}</div>
+        ${sizes.length ? `<label class="size-picker"><span>Tamanho</span><select class="product-size" aria-label="Escolha o tamanho"><option value="">Escolha</option>${sizes.map(size => `<option value="${escapeProductText(size)}">${escapeProductText(size)}</option>`).join('')}</select></label>` : ''}
         <button class="details-btn" type="button">VER DETALHES</button>
         <button class="buy-btn" type="button" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'ESGOTADO' : 'COMPRAR'}</button>
       </div>
@@ -184,6 +193,9 @@ async function loadStoreFromServer() {
     const response = await fetch('/api/store', { cache: 'no-store' });
     if (!response.ok) return;
     const store = await response.json();
+    const serverStore = JSON.stringify(store);
+    if (serverStore === lastServerStore) return;
+    lastServerStore = serverStore;
     if (Array.isArray(store.featuredProducts)) {
       writeStorage('featuredProducts', store.featuredProducts);
       featuredProducts = store.featuredProducts.map(normalizeProduct);
@@ -206,16 +218,32 @@ async function loadStoreFromServer() {
 function openProductDetails(product) {
   const staticModal = document.getElementById('productModal');
   if (staticModal) {
+    const normalizedProduct = normalizeProduct(product);
     const imgEl = document.getElementById('modalImage');
+    const secondaryImgEl = document.getElementById('modalImageSecondary');
     const nameEl = document.getElementById('modalName');
     const priceEl = document.getElementById('modalPrice');
     const descEl = document.getElementById('modalDescription');
     const addBtn = document.getElementById('modalAddCart');
+    const modalSize = document.getElementById('modalSize');
+    const modalSizes = Array.isArray(normalizedProduct.sizes) ? normalizedProduct.sizes : String(normalizedProduct.sizes || '').split(',').map(size => size.trim()).filter(Boolean);
 
-    if (imgEl) { imgEl.src = product.img || product.image || ''; imgEl.alt = product.name || ''; }
+    if (imgEl) { imgEl.src = normalizedProduct.images[0]; imgEl.alt = product.name || ''; }
+    if (secondaryImgEl) {
+      secondaryImgEl.src = normalizedProduct.images[1] || '';
+      secondaryImgEl.hidden = !normalizedProduct.images[1];
+      secondaryImgEl.parentElement.classList.toggle('single', !normalizedProduct.images[1]);
+    }
     if (nameEl) nameEl.textContent = product.name || '';
     if (priceEl) priceEl.textContent = formatPrice(product.price || 0);
     if (descEl) descEl.textContent = product.description || '';
+    if (modalSize) {
+      modalSize.innerHTML = modalSizes.length
+        ? `<option value="">Escolha o tamanho</option>${modalSizes.map(size => `<option value="${escapeProductText(size)}">${escapeProductText(size)}</option>`).join('')}`
+        : '<option value="">Tamanho único</option>';
+      modalSize.parentElement.hidden = !modalSizes.length;
+      modalSize.value = '';
+    }
 
     staticModal.setAttribute('aria-hidden', 'false');
     staticModal.classList.add('open');
@@ -231,7 +259,12 @@ function openProductDetails(product) {
     // add to cart in modal
     if (addBtn) {
       const handler = () => {
-        addProductToCart(product);
+        const selectedSize = modalSize?.value || '';
+        if (modalSizes.length && !selectedSize) {
+          alert('Escolha um tamanho antes de adicionar ao carrinho.');
+          return;
+        }
+        addProductToCart(normalizedProduct, null, selectedSize);
         staticModal.setAttribute('aria-hidden', 'true');
         staticModal.classList.remove('open');
         addBtn.removeEventListener('click', handler);
@@ -270,7 +303,7 @@ function openProductDetails(product) {
 function bindProductDetails(container) {
   container.querySelectorAll('.card').forEach(card => {
     card.addEventListener('click', event => {
-      if (event.target.closest('.buy-btn, .heart')) return;
+      if (event.target.closest('.buy-btn, .heart, .product-size')) return;
       const product = getAllCatalogProducts().find(item => item.id === card.dataset.id);
       if (product) openProductDetails(product);
     });
@@ -315,18 +348,24 @@ function bindBuyButtons(container){
       ripple(button, event);
 
       const targetProduct = getAllCatalogProducts().find(item => item.id === card.dataset.id);
-      if (addProductToCart(targetProduct, card)) {
+      const selectedSize = card.querySelector('.product-size')?.value || '';
+      const productSizes = Array.isArray(targetProduct?.sizes) ? targetProduct.sizes : String(targetProduct?.sizes || '').split(',').map(size => size.trim()).filter(Boolean);
+      if (productSizes.length && !selectedSize) {
+        alert('Escolha um tamanho antes de adicionar ao carrinho.');
+        return;
+      }
+      if (addProductToCart(targetProduct, card, selectedSize)) {
         animateProductToCart(card);
       }
     };
   });
 }
 
-function addProductToCart(product, sourceCard) {
+function addProductToCart(product, sourceCard, size = '') {
   if (!product || Number(product.qty || 0) <= 0) return false;
 
   const cart = Array.isArray(readStorage('cart', [])) ? readStorage('cart', []) : [];
-  const existing = cart.find(item => item.id === product.id);
+  const existing = cart.find(item => item.id === product.id && item.size === size);
   const quantityInCart = Number(existing?.qty || 0);
 
   if (quantityInCart >= Number(product.qty)) {
@@ -337,7 +376,7 @@ function addProductToCart(product, sourceCard) {
   if (existing) {
     existing.qty = quantityInCart + 1;
   } else {
-    cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+    cart.push({ id: product.id, name: product.name, price: product.price, size, qty: 1 });
   }
 
   writeStorage('cart', cart);
@@ -639,6 +678,7 @@ function setupBackTop(){
 
 /* ====== INIT ====== */
 function init(){
+  registerSiteVisit();
   moveArtsSectionToCollectionSpot();
   applyCategorySectionImages();
   renderCategories();
@@ -653,9 +693,17 @@ function init(){
   setupBackTop();
   wireHeaderControls();
   loadStoreFromServer();
+  setInterval(loadStoreFromServer, 2000);
   
   // Re-run lazy load after delay
   setTimeout(lazyLoadImages, 600);
+}
+
+function registerSiteVisit(){
+  if (window.location.pathname.endsWith('/admin.html')) return;
+  fetch('/api/visit', { method: 'POST', cache: 'no-store' }).catch(() => {
+    // A vitrine continua funcionando quando o servidor de métricas está indisponível.
+  });
 }
 
 function moveArtsSectionToCollectionSpot() {

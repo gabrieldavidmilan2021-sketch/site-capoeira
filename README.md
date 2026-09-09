@@ -22,6 +22,14 @@ npm start
 # abre em http://localhost:3000
 ```
 
+Para abrir a mesma loja no celular, conecte o celular à mesma rede Wi-Fi do
+computador e use no navegador do celular o endereço `http://IP_DO_PC:3000`.
+O `npm start` mostra esse endereço como `Acesso pelo celular`. Não use
+`localhost` no celular, pois nele esse nome aponta para o próprio aparelho.
+
+Use sempre a mesma pasta do projeto ao iniciar o servidor. O catálogo fica em
+`data/store.json` no computador e é sincronizado pela API `/api/store`.
+
 ## Git / GitHub
 
 Sugestões antes de subir:
