@@ -131,7 +131,8 @@ async function loadStoreOnline() {
     ];
 
     values.forEach(([key, value]) => {
-      if (Array.isArray(value)) localStorage.setItem(key, JSON.stringify(value));
+      const localValue = JSON.parse(localStorage.getItem(key) || '[]');
+      if (Array.isArray(value) && (value.length || !localValue.length)) localStorage.setItem(key, JSON.stringify(value));
     });
   } catch {
     // O painel continua usando os dados locais se a API estiver indisponível.

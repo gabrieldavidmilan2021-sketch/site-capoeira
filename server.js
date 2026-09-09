@@ -139,6 +139,14 @@ const server = http.createServer((request, response) => {
         if (previousProductCount > 0 && currentProductCount === 0 && data.allowEmptyCatalog !== true) {
           return sendJson(response, 409, { error: 'Catálogo vazio recusado para proteger os produtos existentes.' });
         }
+        const protectedLists = ['featuredProducts', 'bestSellers', 'lojaProducts'];
+        for (const key of protectedLists) {
+          const previousList = Array.isArray(previousStore[key]) ? previousStore[key] : [];
+          const incomingList = Array.isArray(data[key]) ? data[key] : [];
+          if (previousList.length > 0 && incomingList.length === 0 && data.allowEmptyCatalog !== true) {
+            return sendJson(response, 409, { error: `A seção ${key} não pode ser apagada por uma sincronização vazia.` });
+          }
+        }
         const store = {
           featuredProducts: Array.isArray(data.featuredProducts) ? data.featuredProducts : [],
           bestSellers: Array.isArray(data.bestSellers) ? data.bestSellers : [],

@@ -197,12 +197,18 @@ async function loadStoreFromServer() {
     if (serverStore === lastServerStore) return;
     lastServerStore = serverStore;
     if (Array.isArray(store.featuredProducts)) {
-      writeStorage('featuredProducts', store.featuredProducts);
-      featuredProducts = store.featuredProducts.map(normalizeProduct);
+      const localFeatured = readStorage('featuredProducts', []);
+      if (store.featuredProducts.length || !localFeatured.length) {
+        writeStorage('featuredProducts', store.featuredProducts);
+        featuredProducts = store.featuredProducts.map(normalizeProduct);
+      }
     }
     if (Array.isArray(store.bestSellers)) {
-      writeStorage('bestSellers', store.bestSellers);
-      bestSellers = store.bestSellers.map(normalizeProduct);
+      const localBest = readStorage('bestSellers', []);
+      if (store.bestSellers.length || !localBest.length) {
+        writeStorage('bestSellers', store.bestSellers);
+        bestSellers = store.bestSellers.map(normalizeProduct);
+      }
     }
     if (Array.isArray(store.lojaProducts)) writeStorage('lojaProducts', store.lojaProducts);
     if (Array.isArray(store.categorySectionImages)) writeStorage('categorySectionImages', store.categorySectionImages);
