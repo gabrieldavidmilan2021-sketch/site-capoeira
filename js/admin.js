@@ -73,6 +73,7 @@ const categorySectionPreview = document.getElementById('categorySectionPreview')
 const CATEGORY_SECTION_IMAGES_KEY = 'categorySectionImages';
 
 let activeAdminSection = 'featured';
+let isSavingProducts = false;
 
 function getStorePayload() {
   const readList = key => {
@@ -98,6 +99,7 @@ async function syncStoreOnline() {
 }
 
 async function loadStoreOnline() {
+  if (isSavingProducts) return;
   try {
     const response = await fetch('/api/store', { cache: 'no-store' });
     if (!response.ok) return;
@@ -524,6 +526,7 @@ cancelEditBtn.addEventListener('click', () => {
 // Event: Save product
 saveProductBtn.addEventListener('click', async () => {
   saveProductBtn.disabled = true;
+  isSavingProducts = true;
   const sectionProducts = getSectionProducts(activeAdminSection);
   const index = productIndex.value !== '' ? Number(productIndex.value) : -1;
   const name = productName.value.trim();
@@ -541,21 +544,25 @@ saveProductBtn.addEventListener('click', async () => {
   if (!name) {
     showMessage('⚠️ Digite o nome do produto!');
     saveProductBtn.disabled = false;
+    isSavingProducts = false;
     return;
   }
   if (isNaN(price) || price <= 0) {
     showMessage('⚠️ Digite um preço válido!');
     saveProductBtn.disabled = false;
+    isSavingProducts = false;
     return;
   }
   if (!Number.isFinite(qty) || qty < 0) {
     showMessage('⚠️ Informe uma quantidade válida em estoque!');
     saveProductBtn.disabled = false;
+    isSavingProducts = false;
     return;
   }
   if (!img) {
     showMessage('⚠️ Coloque a URL da imagem ou envie um arquivo do celular!');
     saveProductBtn.disabled = false;
+    isSavingProducts = false;
     return;
   }
 
@@ -586,6 +593,7 @@ saveProductBtn.addEventListener('click', async () => {
   renderAdminProducts(activeAdminSection);
   clearForm();
   saveProductBtn.disabled = false;
+  isSavingProducts = false;
   showMessage(savedOnline ? '✅ Produto salvo para todos os usuários!' : '⚠️ Salvo apenas neste navegador. Verifique se o servidor está online.');
 });
 
