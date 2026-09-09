@@ -43,6 +43,7 @@ const loginButton = document.getElementById('loginButton');
 const logoutButton = document.getElementById('logoutButton');
 const adminGrid = document.getElementById('adminGrid');
 const addProductBtn = document.getElementById('addProductBtn');
+const downloadBackupBtn = document.getElementById('downloadBackupBtn');
 const featuredTabBtn = document.getElementById('featuredTabBtn');
 const bestTabBtn = document.getElementById('bestTabBtn');
 const saveProductBtn = document.getElementById('saveProductBtn');
@@ -470,6 +471,22 @@ addProductBtn.addEventListener('click', () => {
   productIndex.value = '';
   deleteProductBtn.style.display = 'none';
   scrollToForm();
+});
+
+downloadBackupBtn.addEventListener('click', async () => {
+  try {
+    const response = await fetch('/api/store', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Falha ao baixar o catálogo');
+    const backup = await response.blob();
+    const url = URL.createObjectURL(backup);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `backup-loja-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch {
+    showMessage('Não foi possível baixar o backup agora.');
+  }
 });
 
 // Event: Cancel edit

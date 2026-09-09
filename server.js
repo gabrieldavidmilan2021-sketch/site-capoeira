@@ -6,6 +6,8 @@ const os = require('os');
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const DATA_FILE = path.join(ROOT, 'data', 'store.json');
+const BACKUP_DIR = path.join(ROOT, 'data', 'backups');
+const MAX_BACKUPS = 30;
 const MIME_TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 
 function ensureStore() {
@@ -13,6 +15,21 @@ function ensureStore() {
   if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify({ featuredProducts: [], bestSellers: [], lojaProducts: [], categorySectionImages: [] }, null, 2));
   }
+}
+
+function createStoreBackup() {
+  if (!fs.existsSync(DATA_FILE)) return null;
+  fs.mkdirSync(BACKUP_DIR, { recursive: true });
+  const filename = `store-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+  const backupPath = path.join(BACKUP_DIR, filename);
+  fs.copyFileSync(DATA_FILE, backupPath);
+
+  const backups = fs.readdirSync(BACKUP_DIR)
+    .filter(file => file.endsWith('.json'))
+    .sort()
+    .reverse();
+  backups.slice(MAX_BACKUPS).forEach(file => fs.unlinkSync(path.join(BACKUP_DIR, file)));
+  return filename;
 }
 
 function readStore() {
@@ -113,16 +130,18 @@ const server = http.createServer((request, response) => {
       if (requestTooLarge) return;
       try {
         const data = JSON.parse(raw || '{}');
+        const previousStore = readStore();
         const store = {
           featuredProducts: Array.isArray(data.featuredProducts) ? data.featuredProducts : [],
           bestSellers: Array.isArray(data.bestSellers) ? data.bestSellers : [],
           lojaProducts: Array.isArray(data.lojaProducts) ? data.lojaProducts : [],
           categorySectionImages: Array.isArray(data.categorySectionImages) ? data.categorySectionImages : [],
-          visitStats: data.visitStats && typeof data.visitStats === 'object' ? data.visitStats : readStore().visitStats || {}
+          visitStats: data.visitStats && typeof data.visitStats === 'object' ? data.visitStats : previousStore.visitStats || {}
         };
         ensureStore();
+        const backup = createStoreBackup();
         fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
-        sendJson(response, 200, { ok: true });
+        sendJson(response, 200, { ok: true, backup });
       } catch { sendJson(response, 400, { error: 'Dados inválidos' }); }
     });
     return;

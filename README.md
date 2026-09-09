@@ -29,6 +29,13 @@ O `npm start` mostra esse endereço como `Acesso pelo celular`. Não use
 
 Use sempre a mesma pasta do projeto ao iniciar o servidor. O catálogo fica em
 `data/store.json` no computador e é sincronizado pela API `/api/store`.
+Antes de cada salvamento do painel, o servidor cria automaticamente uma cópia
+em `data/backups/` e mantém as 30 cópias mais recentes. O painel também possui
+o botão `Baixar backup dos produtos` para guardar uma cópia fora do servidor.
+
+No Render, configure um Persistent Disk para o serviço Node e monte-o em
+`/opt/render/project/src/data` para que os backups locais sobrevivam a novos
+deploys. Mesmo com o disco, mantenha os downloads manuais como cópia externa.
 
 ## Git / GitHub
 
