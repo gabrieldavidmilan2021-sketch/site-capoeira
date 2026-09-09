@@ -98,6 +98,24 @@ async function syncStoreOnline() {
   }
 }
 
+function readBrowserBackup() {
+  const browserStorage = {};
+  for (let index = 0; index < localStorage.length; index += 1) {
+    const key = localStorage.key(index);
+    if (key) browserStorage[key] = localStorage.getItem(key);
+  }
+  return browserStorage;
+}
+
+async function syncBackupServerData(serverData) {
+  const response = await fetch('/api/store', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(serverData)
+  });
+  return response.ok;
+}
+
 async function loadStoreOnline() {
   if (isSavingProducts) return;
   try {
@@ -480,7 +498,13 @@ downloadBackupBtn.addEventListener('click', async () => {
   try {
     const response = await fetch('/api/store', { cache: 'no-store' });
     if (!response.ok) throw new Error('Falha ao baixar o catálogo');
-    const backup = await response.blob();
+    const serverData = await response.json();
+    const backup = new Blob([JSON.stringify({
+      version: 2,
+      createdAt: new Date().toISOString(),
+      server: serverData,
+      browserStorage: readBrowserBackup()
+    }, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(backup);
     const link = document.createElement('a');
     link.href = url;
@@ -497,17 +521,20 @@ restoreBackupFile.addEventListener('change', async event => {
   if (!file) return;
 
   try {
-    const backup = JSON.parse(await file.text());
+    const fileData = JSON.parse(await file.text());
+    const backup = fileData.server && typeof fileData.server === 'object' ? fileData.server : fileData;
+    const browserStorage = fileData.browserStorage && typeof fileData.browserStorage === 'object' ? fileData.browserStorage : {};
     const keys = ['featuredProducts', 'bestSellers', 'lojaProducts', 'categorySectionImages'];
     if (!keys.slice(0, 3).every(key => Array.isArray(backup[key]))) {
       throw new Error('Backup inválido');
     }
 
     if (!confirm('Restaurar este backup e substituir os produtos atuais?')) return;
+    Object.entries(browserStorage).forEach(([key, value]) => localStorage.setItem(key, value));
     keys.forEach(key => {
       if (Array.isArray(backup[key])) localStorage.setItem(key, JSON.stringify(backup[key]));
     });
-    const savedOnline = await syncStoreOnline();
+    const savedOnline = await syncBackupServerData(backup);
     await loadStoreOnline();
     renderAdminProducts();
     showMessage(savedOnline ? '✅ Backup restaurado no servidor!' : '⚠️ Backup restaurado apenas neste navegador.');

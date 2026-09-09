@@ -32,6 +32,8 @@ Use sempre a mesma pasta do projeto ao iniciar o servidor. O catálogo fica em
 Antes de cada salvamento do painel, o servidor cria automaticamente uma cópia
 em `data/backups/` e mantém as 30 cópias mais recentes. O painel também possui
 o botão `Baixar backup dos produtos` para guardar uma cópia fora do servidor.
+Esse download agora reúne os dados do servidor e os dados do navegador, como
+catálogo, carrinho, favoritos, imagens de seção, estoque, tamanhos e visitas.
 
 No Render, configure um Persistent Disk para o serviço Node e monte-o em
 `/opt/render/project/src/data`. Depois crie a variável `DATA_DIR` com o mesmo
