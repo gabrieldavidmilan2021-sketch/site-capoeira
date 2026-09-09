@@ -309,13 +309,13 @@ function optimizeProductImage(file) {
       const image = new Image();
       image.onerror = () => reject(new Error('Imagem inválida'));
       image.onload = () => {
-        const maxSize = 1400;
+        const maxSize = 1000;
         const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
         const canvas = document.createElement('canvas');
         canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
         canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
         canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.82));
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
       };
       image.src = reader.result;
     };
@@ -353,12 +353,7 @@ function renderCategorySectionPreview() {
 }
 
 function readImageFile(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error('Falha ao ler a imagem.'));
-    reader.readAsDataURL(file);
-  });
+  return optimizeProductImage(file);
 }
 
 // Render image gallery
@@ -678,14 +673,19 @@ categorySectionImageInputs.forEach(input => {
     if (!file) return;
 
     try {
+      isSavingProducts = true;
       const images = getCategorySectionImages();
       images[Number(input.dataset.sectionImageIndex)] = await readImageFile(file);
       localStorage.setItem(CATEGORY_SECTION_IMAGES_KEY, JSON.stringify(images));
-      syncStoreOnline();
+      const savedOnline = await syncStoreOnline();
       renderCategorySectionPreview();
-      showMessage(`Imagem do card ${Number(input.dataset.sectionImageIndex) + 1} atualizada com sucesso!`);
+      showMessage(savedOnline
+        ? `Imagem do card ${Number(input.dataset.sectionImageIndex) + 1} salva no servidor!`
+        : 'Imagem salva apenas neste navegador. Verifique a conexão com o servidor.');
     } catch {
       showMessage('Não foi possível salvar a imagem selecionada.');
+    } finally {
+      isSavingProducts = false;
     }
   });
 });
