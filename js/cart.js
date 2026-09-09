@@ -16,6 +16,7 @@ const applyCoupon = document.getElementById('applyCoupon');
 const cartSubtitle = document.getElementById('cartSubtitle');
 const subtotalEl = document.getElementById('subtotal');
 const discountEl = document.getElementById('discount');
+const shippingEl = document.getElementById('shipping');
 const pixModal = document.getElementById('pixModal');
 const pixCode = document.getElementById('pixCode');
 const pixTotal = document.getElementById('pixTotal');
@@ -38,6 +39,7 @@ const allProducts = [
 ];
 
 let currentDiscount = 0;
+let currentShipping = 0;
 
 function $(sel) {
   return document.querySelector(sel);
@@ -72,6 +74,20 @@ function getCart() {
   return Array.isArray(stored) ? stored : [];
 }
 
+function calculateShipping(cep) {
+  const digits = onlyCep(cep);
+  if (digits.length !== 8) return 0;
+
+  const pricesByRegion = { '0': 18, '1': 18, '2': 22, '3': 24, '4': 26, '5': 28, '6': 30, '7': 32, '8': 35, '9': 30 };
+  return pricesByRegion[digits[0]] || 30;
+}
+
+function updateShipping(cep) {
+  currentShipping = calculateShipping(cep);
+  if (shippingEl) shippingEl.textContent = currentShipping ? formatPrice(currentShipping) : 'Informe o CEP';
+  updateTotals();
+}
+
 function saveCart(cart) {
   writeStorage(CART_KEY, cart);
 }
@@ -98,6 +114,8 @@ function updateCartDisplay() {
     cartTotal.textContent = formatPrice(0);
     subtotalEl.textContent = formatPrice(0);
     discountEl.textContent = formatPrice(0);
+    currentShipping = 0;
+    if (shippingEl) shippingEl.textContent = 'Informe o CEP';
     finishButton.disabled = true;
     cartSubtitle.textContent = '0 itens no carrinho';
     return;
@@ -172,7 +190,7 @@ function updateTotals() {
   const cart = getCart();
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const discount = subtotal * (currentDiscount / 100);
-  const total = subtotal - discount;
+  const total = subtotal - discount + currentShipping;
 
   subtotalEl.textContent = formatPrice(subtotal);
   discountEl.textContent = discount > 0 ? `-${formatPrice(discount)}` : 'R$0,00';
@@ -181,7 +199,7 @@ function updateTotals() {
 
 function getOrderTotal() {
   const subtotal = getCart().reduce((sum, item) => sum + item.price * item.qty, 0);
-  return subtotal - subtotal * (currentDiscount / 100);
+  return subtotal - subtotal * (currentDiscount / 100) + currentShipping;
 }
 
 function formatPixField(id, value) {
@@ -228,7 +246,7 @@ function openPixCheckout() {
 
 function sendOrderNotification(cart = getCart()) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const total = subtotal - subtotal * (currentDiscount / 100);
+  const total = subtotal - subtotal * (currentDiscount / 100) + currentShipping;
   const items = cart.map(item => `• ${item.qty}x ${item.name}${item.size ? ` (Tamanho ${item.size})` : ''} — ${formatPrice(item.price * item.qty)}`).join('\n');
   const message = [
     'NOVO PEDIDO — PIX INFORMADO',
@@ -237,6 +255,7 @@ function sendOrderNotification(cart = getCart()) {
     'Itens:',
     items,
     '',
+    `Frete: ${formatPrice(currentShipping)}`,
     `Total: ${formatPrice(total)}`,
     'Status: cliente informou que realizou o pagamento PIX.'
   ].join('\n');
@@ -404,6 +423,7 @@ function formatCheckoutCep() {
   const field = checkoutField('customerCep');
   const cep = onlyCep(field.value).slice(0, 8);
   field.value = cep.length > 5 ? `${cep.slice(0, 5)}-${cep.slice(5)}` : cep;
+  updateShipping(field.value);
 }
 
 async function fillAddressFromCep() {
@@ -417,6 +437,7 @@ async function fillAddressFromCep() {
     return;
   }
 
+  updateShipping(cep);
   status.textContent = 'Buscando endereço...';
   try {
     const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
@@ -437,9 +458,15 @@ async function fillAddressFromCep() {
 
 function sendCheckoutToWhatsApp() {
   const cart = getCart();
+  const cep = onlyCep(checkoutField('customerCep').value);
+  if (cep.length !== 8) {
+    alert('Informe um CEP válido para calcular o frete.');
+    return;
+  }
+  updateShipping(cep);
   const total = getOrderTotal();
   const value = id => checkoutField(id).value.trim();
-  const items = cart.map(item => `• ${item.qty}x ${item.name} — ${formatPrice(item.price * item.qty)}`).join('\n');
+  const items = cart.map(item => `• ${item.qty}x ${item.name}${item.size ? ` (Tamanho ${item.size})` : ''} — ${formatPrice(item.price * item.qty)}`).join('\n');
   const complement = value('customerComplement');
   const message = [
     'NOVO PEDIDO',
@@ -456,6 +483,7 @@ function sendCheckoutToWhatsApp() {
     'Itens:',
     items,
     '',
+    `Frete: ${formatPrice(currentShipping)}`,
     `Quantidade de itens: ${cart.reduce((sum, item) => sum + Number(item.qty || 0), 0)}`,
     `Total do pedido: ${formatPrice(total)}`
   ].join('\n');
