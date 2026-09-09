@@ -2095,6 +2095,8 @@ body,.fashion-home{background:#ededeb;color:#171717}
 
 .site-header button,.benefit-icon,.user-avatar img{filter:grayscale(1)}
 
+.color-swatches{display:none !important}
+
 .admin-form-actions{
   display:flex;
   gap:14px;
