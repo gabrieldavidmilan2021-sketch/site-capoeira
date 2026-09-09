@@ -34,8 +34,13 @@ em `data/backups/` e mantém as 30 cópias mais recentes. O painel também possu
 o botão `Baixar backup dos produtos` para guardar uma cópia fora do servidor.
 
 No Render, configure um Persistent Disk para o serviço Node e monte-o em
-`/opt/render/project/src/data` para que os backups locais sobrevivam a novos
-deploys. Mesmo com o disco, mantenha os downloads manuais como cópia externa.
+`/opt/render/project/src/data`. Depois crie a variável `DATA_DIR` com o mesmo
+valor. Assim os dados ficam fora da área que é substituída durante o deploy.
+Mesmo com o disco, mantenha os downloads manuais como cópia externa.
+
+O servidor também recusa uma sincronização que tente trocar um catálogo com
+produtos por três listas vazias. Isso protege os dados contra `localStorage`
+limpo ou uma aba antiga do navegador.
 
 ## Git / GitHub
 

@@ -5,8 +5,9 @@ const os = require('os');
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
-const DATA_FILE = path.join(ROOT, 'data', 'store.json');
-const BACKUP_DIR = path.join(ROOT, 'data', 'backups');
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
+const DATA_FILE = path.join(DATA_DIR, 'store.json');
+const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 const MAX_BACKUPS = 30;
 const MIME_TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 
@@ -131,6 +132,13 @@ const server = http.createServer((request, response) => {
       try {
         const data = JSON.parse(raw || '{}');
         const previousStore = readStore();
+        const incomingProducts = [data.featuredProducts, data.bestSellers, data.lojaProducts];
+        const currentProductCount = incomingProducts.reduce((total, products) => total + (Array.isArray(products) ? products.length : 0), 0);
+        const previousProductCount = ['featuredProducts', 'bestSellers', 'lojaProducts']
+          .reduce((total, key) => total + (Array.isArray(previousStore[key]) ? previousStore[key].length : 0), 0);
+        if (previousProductCount > 0 && currentProductCount === 0 && data.allowEmptyCatalog !== true) {
+          return sendJson(response, 409, { error: 'Catálogo vazio recusado para proteger os produtos existentes.' });
+        }
         const store = {
           featuredProducts: Array.isArray(data.featuredProducts) ? data.featuredProducts : [],
           bestSellers: Array.isArray(data.bestSellers) ? data.bestSellers : [],

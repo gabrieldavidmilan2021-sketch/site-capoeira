@@ -44,6 +44,7 @@ const logoutButton = document.getElementById('logoutButton');
 const adminGrid = document.getElementById('adminGrid');
 const addProductBtn = document.getElementById('addProductBtn');
 const downloadBackupBtn = document.getElementById('downloadBackupBtn');
+const restoreBackupFile = document.getElementById('restoreBackupFile');
 const featuredTabBtn = document.getElementById('featuredTabBtn');
 const bestTabBtn = document.getElementById('bestTabBtn');
 const saveProductBtn = document.getElementById('saveProductBtn');
@@ -486,6 +487,32 @@ downloadBackupBtn.addEventListener('click', async () => {
     URL.revokeObjectURL(url);
   } catch {
     showMessage('Não foi possível baixar o backup agora.');
+  }
+});
+
+restoreBackupFile.addEventListener('change', async event => {
+  const [file] = event.target.files;
+  if (!file) return;
+
+  try {
+    const backup = JSON.parse(await file.text());
+    const keys = ['featuredProducts', 'bestSellers', 'lojaProducts', 'categorySectionImages'];
+    if (!keys.slice(0, 3).every(key => Array.isArray(backup[key]))) {
+      throw new Error('Backup inválido');
+    }
+
+    if (!confirm('Restaurar este backup e substituir os produtos atuais?')) return;
+    keys.forEach(key => {
+      if (Array.isArray(backup[key])) localStorage.setItem(key, JSON.stringify(backup[key]));
+    });
+    const savedOnline = await syncStoreOnline();
+    await loadStoreOnline();
+    renderAdminProducts();
+    showMessage(savedOnline ? '✅ Backup restaurado no servidor!' : '⚠️ Backup restaurado apenas neste navegador.');
+  } catch {
+    showMessage('Não foi possível ler este arquivo de backup.');
+  } finally {
+    restoreBackupFile.value = '';
   }
 });
 
