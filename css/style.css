@@ -449,6 +449,17 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
 
 .card .info{
   padding:14px;
+  display:flex;
+  flex-direction:column;
+  min-height:210px;
+}
+
+.card-kicker{
+  color:var(--accent-2);
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
 }
 
 .card .title{
@@ -456,6 +467,14 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   margin:0 0 6px;
   font-size:0.95rem;
   line-height:1.3;
+}
+
+.card-description{
+  color:var(--muted-text);
+  font-size:.84rem;
+  line-height:1.45;
+  margin:0 0 4px;
+  min-height:2.45em;
 }
 
 .card .prices{
@@ -483,6 +502,15 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   text-transform:uppercase;
   color:var(--muted-text);
   font-weight:700;
+}
+
+.card .details-btn,
+.card .buy-btn{
+  margin-top:auto;
+}
+
+.card .details-btn + .buy-btn{
+  margin-top:8px;
 }
 
 .buy-btn:disabled{
@@ -2731,6 +2759,9 @@ body,.fashion-home{background:#ededeb;color:#171717}
     font-size:0.9rem;
     padding:12px 14px;
   }
+
+  .order-review{ padding:16px; }
+  .order-review-actions{ grid-template-columns:1fr; }
 }
 
 .hidden{
@@ -2949,6 +2980,16 @@ body,.fashion-home{background:#ededeb;color:#171717}
 .checkout-wide{ grid-column:1 / -1; }
 .cep-status{ min-height:1.4em; margin:12px 0 !important; font-size:.9rem; }
 .checkout-modal-content .btn-checkout{ width:100%; }
+.order-review{ margin-top:22px; padding:20px; border:1px solid rgba(168,79,43,.2); border-radius:14px; background:linear-gradient(135deg,#fffdf9,#f6eee4); }
+.order-review-heading h3{ margin:5px 0 16px; color:var(--text); }
+.order-review-customer{ display:grid; gap:4px; padding:12px 14px; border-radius:10px; background:#fff; color:var(--muted-text); }
+.order-review-customer strong{ color:var(--text); }
+.order-review-values{ display:grid; gap:10px; margin:18px 0; }
+.order-review-values div{ display:flex; justify-content:space-between; gap:16px; color:var(--muted-text); }
+.order-review-values strong{ color:var(--text); }
+.order-review-values .order-review-total{ padding-top:12px; border-top:1px solid rgba(36,35,32,.14); color:var(--text); font-size:1.12rem; }
+.order-review-total strong{ color:var(--accent); font-size:1.25rem; }
+.order-review-actions{ display:grid; grid-template-columns:1fr 1.4fr; gap:10px; }
 
 .section-image-manager{ margin-top:26px; padding-top:22px; border-top:1px solid rgba(0,0,0,.1); }
 .section-image-manager h3{ margin:0 0 6px; }

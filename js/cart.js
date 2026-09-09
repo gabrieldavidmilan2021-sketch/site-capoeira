@@ -343,6 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Checkout por WhatsApp com preenchimento automático do endereço via ViaCEP.
 const checkoutModal = document.getElementById('checkoutModal');
 const checkoutForm = document.getElementById('checkoutForm');
+const orderReview = document.getElementById('orderReview');
+const reviewSubtotal = document.getElementById('reviewSubtotal');
+const reviewShipping = document.getElementById('reviewShipping');
+const reviewTotal = document.getElementById('reviewTotal');
+const orderReviewCustomer = document.getElementById('orderReviewCustomer');
+const backToCheckoutButton = document.getElementById('backToCheckoutButton');
+const confirmOrderButton = document.getElementById('confirmOrderButton');
 const checkoutFinishButton = finishButton.cloneNode(true);
 finishButton.replaceWith(checkoutFinishButton);
 
@@ -464,6 +471,10 @@ function sendCheckoutToWhatsApp() {
     return;
   }
   updateShipping(cep);
+  if (onlyCep(checkoutField('customerCpf').value).length !== 11) {
+    alert('Informe um CPF válido com 11 números.');
+    return;
+  }
   const total = getOrderTotal();
   const value = id => checkoutField(id).value.trim();
   const items = cart.map(item => `• ${item.qty}x ${item.name}${item.size ? ` (Tamanho ${item.size})` : ''} — ${formatPrice(item.price * item.qty)}`).join('\n');
@@ -474,6 +485,7 @@ function sendCheckoutToWhatsApp() {
     '',
     `Cliente: ${value('customerName')}`,
     `Telefone: ${value('customerPhone')}`,
+    `CPF: ${value('customerCpf')}`,
     '',
     'Entrega:',
     `CEP: ${value('customerCep')}`,
@@ -493,11 +505,32 @@ function sendCheckoutToWhatsApp() {
   window.location.href = `https://wa.me/5511981599583?text=${encodeURIComponent(message)}`;
 }
 
+function showOrderReview() {
+  const cep = onlyCep(checkoutField('customerCep').value);
+  if (cep.length !== 8) {
+    alert('Informe um CEP válido para calcular o frete.');
+    return;
+  }
+  updateShipping(cep);
+  const subtotal = getCart().reduce((sum, item) => sum + item.price * item.qty, 0);
+  const discount = subtotal * (currentDiscount / 100);
+  const total = subtotal - discount + currentShipping;
+  const value = id => checkoutField(id).value.trim();
+  orderReviewCustomer.innerHTML = `<strong>${value('customerName')}</strong><span>CPF: ${value('customerCpf')} · ${value('customerCity')}/${value('customerState')}</span>`;
+  reviewSubtotal.textContent = formatPrice(subtotal - discount);
+  reviewShipping.textContent = formatPrice(currentShipping);
+  reviewTotal.textContent = formatPrice(total);
+  checkoutForm.hidden = true;
+  orderReview.hidden = false;
+}
+
 checkoutFinishButton.addEventListener('click', () => {
   if (!getCart().length) {
     alert('Adicione ao menos um produto ao carrinho antes de finalizar a compra.');
     return;
   }
+  checkoutForm.hidden = false;
+  orderReview.hidden = true;
   checkoutModal.classList.remove('hidden');
   checkoutField('customerName').focus();
 });
@@ -505,8 +538,19 @@ checkoutFinishButton.addEventListener('click', () => {
 checkoutField('closeCheckoutModal').addEventListener('click', () => checkoutModal.classList.add('hidden'));
 checkoutField('customerCep').addEventListener('input', formatCheckoutCep);
 checkoutField('customerCep').addEventListener('blur', fillAddressFromCep);
+checkoutField('customerCpf').addEventListener('input', event => {
+  const digits = onlyCep(event.target.value).slice(0, 11);
+  event.target.value = digits.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+});
 checkoutForm.addEventListener('submit', event => {
   event.preventDefault();
   if (!checkoutForm.reportValidity()) return;
-  sendCheckoutToWhatsApp();
+  showOrderReview();
 });
+
+backToCheckoutButton.addEventListener('click', () => {
+  orderReview.hidden = true;
+  checkoutForm.hidden = false;
+});
+
+confirmOrderButton.addEventListener('click', () => sendCheckoutToWhatsApp());

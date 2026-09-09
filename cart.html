@@ -112,6 +112,7 @@
 				<div class="checkout-grid">
 					<label>Nome completo<input id="customerName" autocomplete="name" required></label>
 					<label>Telefone<input id="customerPhone" inputmode="tel" autocomplete="tel" required></label>
+					<label>CPF<input id="customerCpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00" required></label>
 					<label>CEP<input id="customerCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" required></label>
 					<label>Estado<input id="customerState" autocomplete="address-level1" required></label>
 					<label class="checkout-wide">Rua / Avenida<input id="customerStreet" autocomplete="address-line1" required></label>
@@ -121,8 +122,24 @@
 					<label>Cidade<input id="customerCity" autocomplete="address-level2" required></label>
 				</div>
 				<p id="cepStatus" class="cep-status" aria-live="polite"></p>
-				<button class="btn-checkout" type="submit">Finalizar compra</button>
+				<button id="reviewOrderButton" class="btn-checkout" type="submit">Revisar pedido</button>
 			</form>
+			<section id="orderReview" class="order-review" hidden>
+				<div class="order-review-heading">
+					<span class="eyebrow">ÚLTIMA CONFERÊNCIA</span>
+					<h3>Confira seu pedido</h3>
+				</div>
+				<div id="orderReviewCustomer" class="order-review-customer"></div>
+				<div class="order-review-values">
+					<div><span>Valor dos produtos</span><strong id="reviewSubtotal">R$0,00</strong></div>
+					<div><span>Frete</span><strong id="reviewShipping">R$0,00</strong></div>
+					<div class="order-review-total"><span>Valor total</span><strong id="reviewTotal">R$0,00</strong></div>
+				</div>
+				<div class="order-review-actions">
+					<button id="backToCheckoutButton" class="btn-continue" type="button">Voltar e corrigir</button>
+					<button id="confirmOrderButton" class="btn-checkout" type="button">Confirmar e enviar pedido</button>
+				</div>
+			</section>
 		</div>
 	</div>
 
