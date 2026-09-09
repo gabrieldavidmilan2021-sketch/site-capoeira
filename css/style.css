@@ -1706,6 +1706,33 @@ html{scroll-behavior:smooth}
   box-shadow:0 16px 32px rgba(0,0,0,0.08);
 }
 
+.visit-metrics{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:20px;
+  align-items:center;
+  margin:0 0 28px;
+  padding:22px;
+  background:#ededeb;
+  border:1px solid #d1d1cd;
+  border-radius:16px;
+}
+
+.visit-metrics .eyebrow{margin-bottom:8px}
+.visit-metrics h2{margin:0;font-size:1.35rem}
+.visit-metrics-values{display:grid;grid-template-columns:auto auto;gap:2px 10px;align-items:baseline;text-align:right}
+.visit-metrics-values strong{font-size:1.7rem;color:#202020}
+.visit-metrics-values span{font-size:.78rem;color:#666663;text-transform:uppercase;letter-spacing:.08em}
+.visit-history{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid #d1d1cd;padding-top:14px;color:#666663;font-size:.82rem}
+.visit-history div{display:flex;justify-content:space-between;gap:8px;padding:8px 0}
+.visit-history strong{color:#30302e}
+
+@media (max-width:600px){
+  .visit-metrics{grid-template-columns:1fr}
+  .visit-metrics-values{text-align:left}
+  .visit-history{grid-template-columns:1fr}
+}
+
 .login-box h2{
   text-align:center;
   color:var(--accent-2);
