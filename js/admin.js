@@ -563,6 +563,10 @@ restoreBackupFile.addEventListener('change', async event => {
     if (!keys.slice(0, 3).every(key => Array.isArray(backup[key]))) {
       throw new Error('Backup inválido');
     }
+    const backupProductCount = keys.slice(0, 3).reduce((total, key) => total + backup[key].length, 0);
+    if (backupProductCount === 0) {
+      throw new Error('Backup sem produtos');
+    }
 
     if (!confirm('Restaurar este backup e substituir os produtos atuais?')) return;
     Object.entries(browserStorage).forEach(([key, value]) => localStorage.setItem(key, value));
