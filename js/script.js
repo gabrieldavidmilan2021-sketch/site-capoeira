@@ -157,11 +157,15 @@ function productCardHTML(p){
   const safeProduct = normalizeProduct(p);
   const isOutOfStock = Number(safeProduct.qty) <= 0;
   const sizes = Array.isArray(safeProduct.sizes) ? safeProduct.sizes : String(safeProduct.sizes || '').split(',').map(size => size.trim()).filter(Boolean);
-  const imageMarkup = safeProduct.images.map((image, index) => `<img class="product-card-image image-loading ${index === 0 ? 'is-primary' : ''}" data-src="${escapeProductText(image)}" alt="${escapeProductText(safeProduct.name)} - foto ${index + 1}" loading="${index === 0 ? 'eager' : 'lazy'}" fetchpriority="${index === 0 ? 'high' : 'low'}" decoding="async" onerror="this.onerror=null;this.src='${productImageFallback}';this.removeAttribute('data-src');this.classList.remove('image-loading')">`).join('');
+  const imageMarkup = safeProduct.images.map((image, index) => {
+    const sourceAttribute = image.startsWith('data:') ? 'src' : 'data-src';
+    return `<img class="product-card-image image-loading ${index === 0 ? 'is-primary' : ''}" ${sourceAttribute}="${escapeProductText(image)}" alt="${escapeProductText(safeProduct.name)} - foto ${index + 1}" loading="${index === 0 ? 'eager' : 'lazy'}" fetchpriority="${index === 0 ? 'high' : 'low'}" decoding="async" onload="markImageLoaded(this)" onerror="this.onerror=null;this.src='${productImageFallback}';this.removeAttribute('data-src');markImageLoaded(this)">`;
+  }).join('');
   return `
     <article class="card fade-up ${safeProduct.motion==='float' ? 'card--float' : ''}" data-id="${safeProduct.id}" data-qty="${safeProduct.qty ?? 0}">
       <div class="media product-card-gallery ${safeProduct.images.length > 1 ? 'has-secondary' : ''}">
         ${imageMarkup}
+        <span class="image-loader" aria-live="polite">Carregando imagem...</span>
         <button class="heart" aria-label="Favoritar" type="button">♡</button>
       </div>
       <div class="info">
@@ -181,6 +185,14 @@ function productCardHTML(p){
 
 function escapeProductText(value) {
   return String(value || '').replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+}
+
+function markImageLoaded(image) {
+  image.classList.remove('image-loading');
+  const gallery = image.closest('.product-card-gallery');
+  if (gallery && !gallery.querySelector('.image-loading')) {
+    gallery.classList.add('images-ready');
+  }
 }
 
 function formatPrice(value) {
@@ -444,7 +456,7 @@ function renderBest(){
 function lazyLoadImages(){
   const imgs = document.querySelectorAll('img[data-src]');
   imgs.forEach(img => {
-    img.addEventListener('load', () => img.classList.remove('image-loading'), { once: true });
+    img.addEventListener('load', () => markImageLoaded(img), { once: true });
   });
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
