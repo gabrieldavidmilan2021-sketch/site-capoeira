@@ -72,7 +72,7 @@ function normalizeProduct(p = {}) {
     oldPrice,
     img: images[0] || normalizeProductImage(''),
     images: images.length ? images : [normalizeProductImage('')],
-    category: p.category || '',
+    category: p.category || (String(p.name || '').toLowerCase().includes('personaliz') ? 'Personalizados' : 'Estampas prontas'),
     description: p.description || '',
     sizes: p.sizes || '',
     motion: p.motion || 'static',
@@ -200,6 +200,26 @@ function formatPrice(value) {
   return `R$${n.toFixed(2).replace('.', ',')}`;
 }
 
+function productMatchesCategory(product, category) {
+  const normalizedCategory = product.category || (String(product.name || '').toLowerCase().includes('personaliz') ? 'Personalizados' : 'Estampas prontas');
+  return String(normalizedCategory).toLowerCase() === category.toLowerCase();
+}
+
+function showCartNotice() {
+  let notice = document.getElementById('cartNotice');
+  if (!notice) {
+    notice = document.createElement('div');
+    notice.id = 'cartNotice';
+    notice.className = 'cart-notice';
+    notice.innerHTML = '<span>Produto adicionado ao carrinho.</span><a href="cart.html">Entre no carrinho para finalizar a compra</a><button type="button" aria-label="Fechar aviso">×</button>';
+    document.body.appendChild(notice);
+    notice.querySelector('button').addEventListener('click', () => notice.classList.remove('is-visible'));
+  }
+  notice.classList.add('is-visible');
+  clearTimeout(showCartNotice.timer);
+  showCartNotice.timer = setTimeout(() => notice.classList.remove('is-visible'), 7000);
+}
+
 async function loadStoreFromServer() {
   try {
     const response = await fetch('/api/store', { cache: 'no-store' });
@@ -208,22 +228,18 @@ async function loadStoreFromServer() {
     const serverStore = JSON.stringify(store);
     if (serverStore === lastServerStore) return;
     lastServerStore = serverStore;
-    if (Array.isArray(store.featuredProducts)) {
-      const localFeatured = readStorage('featuredProducts', []);
-      if (store.featuredProducts.length || !localFeatured.length) {
-        writeStorage('featuredProducts', store.featuredProducts);
-        featuredProducts = store.featuredProducts.map(normalizeProduct);
-      }
+    if (Array.isArray(store.featuredProducts) && store.featuredProducts.length) {
+      writeStorage('featuredProducts', store.featuredProducts);
+      featuredProducts = store.featuredProducts.map(normalizeProduct);
     }
-    if (Array.isArray(store.bestSellers)) {
-      const localBest = readStorage('bestSellers', []);
-      if (store.bestSellers.length || !localBest.length) {
-        writeStorage('bestSellers', store.bestSellers);
-        bestSellers = store.bestSellers.map(normalizeProduct);
-      }
+    if (Array.isArray(store.bestSellers) && store.bestSellers.length) {
+      writeStorage('bestSellers', store.bestSellers);
+      bestSellers = store.bestSellers.map(normalizeProduct);
     }
     if (Array.isArray(store.lojaProducts)) writeStorage('lojaProducts', store.lojaProducts);
-    if (Array.isArray(store.categorySectionImages)) writeStorage('categorySectionImages', store.categorySectionImages);
+    if (Array.isArray(store.categorySectionImages) && store.categorySectionImages.length) {
+      writeStorage('categorySectionImages', store.categorySectionImages);
+    }
     renderFeatured();
     renderBest();
     applyCategorySectionImages();
@@ -282,7 +298,7 @@ function openProductDetails(product) {
           alert('Escolha um tamanho antes de adicionar ao carrinho.');
           return;
         }
-        addProductToCart(normalizedProduct, null, selectedSize);
+        if (addProductToCart(normalizedProduct, null, selectedSize)) showCartNotice();
         staticModal.setAttribute('aria-hidden', 'true');
         staticModal.classList.remove('open');
         addBtn.removeEventListener('click', handler);
@@ -312,7 +328,10 @@ function openProductDetails(product) {
   const addButton = modal.querySelector('.product-details-add');
   if (addButton) {
     addButton.addEventListener('click', () => {
-      if (addProductToCart(product)) modal.classList.add('hidden');
+      if (addProductToCart(product)) {
+        showCartNotice();
+        modal.classList.add('hidden');
+      }
     });
   }
   modal.classList.remove('hidden');
@@ -401,6 +420,7 @@ function addProductToCart(product, sourceCard, size = '') {
   updateCartCount();
   renderFeatured();
   renderBest();
+  showCartNotice();
   return true;
 }
 
@@ -415,7 +435,7 @@ function renderFeatured(){
   }
   
   const list = featuredProducts.filter(p => {
-    if(currentCategory && p.name.toLowerCase().indexOf(currentCategory.toLowerCase()) === -1 && (!p.category || p.category.toLowerCase() !== currentCategory.toLowerCase())) return false;
+    if(currentCategory && !productMatchesCategory(p, currentCategory)) return false;
     if(currentQuery && p.name.toLowerCase().indexOf(currentQuery.toLowerCase()) === -1) return false;
     return true;
   });
@@ -439,7 +459,7 @@ function renderBest(){
   }
   
   const list = bestSellers.filter(p => {
-    if(currentCategory && p.name.toLowerCase().indexOf(currentCategory.toLowerCase()) === -1 && (!p.category || p.category.toLowerCase() !== currentCategory.toLowerCase())) return false;
+    if(currentCategory && !productMatchesCategory(p, currentCategory)) return false;
     if(currentQuery && p.name.toLowerCase().indexOf(currentQuery.toLowerCase()) === -1) return false;
     return true;
   });
@@ -610,8 +630,11 @@ function wireHeaderControls(){
   document.addEventListener('click', e => {
     if(e.target.closest('.category-item')){
       e.preventDefault();
-      const name = e.target.textContent.trim();
-      setCategory(name);
+      const item = e.target.closest('.category-item');
+      const name = item.dataset.category || '';
+      const targetId = item.dataset.target || (name ? 'destaques' : 'pronta-entrega');
+      setCategory(name || null);
+      document.getElementById(targetId)?.scrollIntoView({ behavior:'smooth', block:'start' });
       if(catMenu) catMenu.classList.remove('open');
     }
     
@@ -697,6 +720,29 @@ function setupBackTop(){
   });
 }
 
+function setupSectionAnimations(){
+  const sections = document.querySelectorAll('.fashion-home > .section.container');
+  if(!sections.length) return;
+
+  if(!('IntersectionObserver' in window)) {
+    sections.forEach(section => section.classList.add('section-visible'));
+    return;
+  }
+
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      entry.target.classList.add('section-visible');
+      sectionObserver.unobserve(entry.target);
+    });
+  }, { threshold:0.12 });
+
+  sections.forEach((section, index) => {
+    section.style.transitionDelay = `${Math.min(index * 80, 320)}ms`;
+    sectionObserver.observe(section);
+  });
+}
+
 /* ====== INIT ====== */
 function init(){
   registerSiteVisit();
@@ -713,8 +759,8 @@ function init(){
   updateCartCount();
   setupBackTop();
   wireHeaderControls();
+  setupSectionAnimations();
   loadStoreFromServer();
-  setInterval(loadStoreFromServer, 2000);
   
   // Re-run lazy load after delay
   setTimeout(lazyLoadImages, 600);

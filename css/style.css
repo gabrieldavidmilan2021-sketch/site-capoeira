@@ -614,8 +614,14 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
 }
 
 .card.fade-up{
-  opacity:0;
-  transform:translateY(20px) scale(.98);
+  opacity:1;
+  transform:translateY(0) scale(1);
+  animation:cardEnter .6s cubic-bezier(.2, .9, .3, 1) both;
+}
+
+@keyframes cardEnter{
+  from{opacity:0; transform:translateY(20px) scale(.98)}
+  to{opacity:1; transform:translateY(0) scale(1)}
 }
 
 .card.visible{
@@ -863,15 +869,27 @@ html{scroll-behavior:smooth}
 .split-collection,
 .benefit-card,
 .lookbook-item{
-  opacity:0;
-  transform:translateY(40px);
+  opacity:1;
+  transform:translateY(0);
+  animation:revealEnter .8s ease both;
   transition:opacity 0.8s ease, transform 0.8s ease;
 }
 
+@keyframes revealEnter{
+  from{opacity:0; transform:translateY(40px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
 .section.container{
-  opacity:0;
-  transform:translateY(34px);
+  opacity:1;
+  transform:translateY(0);
+  animation:sectionEnter .75s ease both;
   transition:opacity .75s ease, transform .75s ease;
+}
+
+@keyframes sectionEnter{
+  from{opacity:0; transform:translateY(34px)}
+  to{opacity:1; transform:translateY(0)}
 }
 
 .section.container.section-visible{
