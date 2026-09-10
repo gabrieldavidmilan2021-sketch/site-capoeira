@@ -204,8 +204,18 @@ function getAllProducts() {
 
 async function saveSectionProducts(section, products) {
   const normalized = products.map(normalizeProductRecord);
-  const featured = section === 'best' ? getSectionProducts('featured') : normalized;
-  const best = section === 'best' ? normalized : getSectionProducts('best');
+  let serverStore = {};
+  try {
+    const response = await fetch('/api/store', { cache: 'no-store' });
+    if (response.ok) serverStore = await response.json();
+  } catch {}
+
+  const localFeatured = getSectionProducts('featured');
+  const localBest = getSectionProducts('best');
+  const serverFeatured = Array.isArray(serverStore.featuredProducts) ? serverStore.featuredProducts.map(normalizeProductRecord) : [];
+  const serverBest = Array.isArray(serverStore.bestSellers) ? serverStore.bestSellers.map(normalizeProductRecord) : [];
+  const featured = section === 'best' ? (localFeatured.length ? localFeatured : serverFeatured) : normalized;
+  const best = section === 'best' ? normalized : (localBest.length ? localBest : serverBest);
 
   localStorage.setItem(FEATURED_KEY, JSON.stringify(featured));
   localStorage.setItem(BEST_KEY, JSON.stringify(best));

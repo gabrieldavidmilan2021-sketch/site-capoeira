@@ -146,7 +146,7 @@ function renderCategories(){
   row.innerHTML = categories.map(cat => `
     <div class="cat" data-cat="${cat.name}" title="${cat.name}">
       <div class="thumb">
-        <img data-src="${cat.img}" alt="${cat.name}" loading="lazy">
+        <img data-src="${cat.img}" alt="${cat.name}" loading="lazy" decoding="async">
       </div>
       <p>${cat.name}</p>
     </div>
@@ -157,7 +157,7 @@ function productCardHTML(p){
   const safeProduct = normalizeProduct(p);
   const isOutOfStock = Number(safeProduct.qty) <= 0;
   const sizes = Array.isArray(safeProduct.sizes) ? safeProduct.sizes : String(safeProduct.sizes || '').split(',').map(size => size.trim()).filter(Boolean);
-  const imageMarkup = safeProduct.images.map((image, index) => `<img class="product-card-image ${index === 0 ? 'is-primary' : ''}" data-src="${escapeProductText(image)}" alt="${escapeProductText(safeProduct.name)} - foto ${index + 1}" loading="lazy" onerror="this.onerror=null;this.src='${productImageFallback}';this.removeAttribute('data-src')">`).join('');
+  const imageMarkup = safeProduct.images.map((image, index) => `<img class="product-card-image image-loading ${index === 0 ? 'is-primary' : ''}" data-src="${escapeProductText(image)}" alt="${escapeProductText(safeProduct.name)} - foto ${index + 1}" loading="${index === 0 ? 'eager' : 'lazy'}" fetchpriority="${index === 0 ? 'high' : 'low'}" decoding="async" onerror="this.onerror=null;this.src='${productImageFallback}';this.removeAttribute('data-src');this.classList.remove('image-loading')">`).join('');
   return `
     <article class="card fade-up ${safeProduct.motion==='float' ? 'card--float' : ''}" data-id="${safeProduct.id}" data-qty="${safeProduct.qty ?? 0}">
       <div class="media product-card-gallery ${safeProduct.images.length > 1 ? 'has-secondary' : ''}">
@@ -443,6 +443,9 @@ function renderBest(){
 /* ====== LAZY LOAD ====== */
 function lazyLoadImages(){
   const imgs = document.querySelectorAll('img[data-src]');
+  imgs.forEach(img => {
+    img.addEventListener('load', () => img.classList.remove('image-loading'), { once: true });
+  });
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
@@ -452,7 +455,7 @@ function lazyLoadImages(){
         obs.unobserve(img);
       }
     });
-  }, { rootMargin: '200px' });
+  }, { rootMargin: '500px' });
   
   imgs.forEach(img => observer.observe(img));
 }

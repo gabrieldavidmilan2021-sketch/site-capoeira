@@ -396,12 +396,38 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   grid-template-columns:1fr 1fr;
 }
 
+.product-card-gallery:has(.image-loading)::before{
+  content:'Carregando imagem...';
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:var(--muted-text);
+  font-size:.72rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:linear-gradient(110deg, #eee7df 30%, #f9f5ef 45%, #eee7df 60%);
+  background-size:200% 100%;
+  animation:imageLoading 1.2s linear infinite;
+  pointer-events:none;
+  z-index:2;
+}
+
+.product-card-gallery .image-loading{
+  opacity:0;
+}
+
+@keyframes imageLoading{
+  to{background-position:-200% 0}
+}
+
 .card img{
   width:100%;
   height:320px;
   object-fit:cover;
   display:block;
   transition:transform .35s ease;
+  aspect-ratio:4 / 5;
 }
 
 .card .product-card-image{
