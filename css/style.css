@@ -817,9 +817,18 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
 /* ======== MODERN FASHION HOME ======== */
 html{scroll-behavior:smooth}
 
+#destaques,
+#pronta-entrega{scroll-margin-top:130px}
+
 .fashion-home{
   background:#d8c3a5;
   padding-bottom:30px;
+  animation:fashionHomeEnter 1s cubic-bezier(.22,.8,.25,1) both;
+}
+
+@keyframes fashionHomeEnter{
+  from{opacity:0; transform:translateY(32px) scale(.985)}
+  to{opacity:1; transform:translateY(0) scale(1)}
 }
 
 .eyebrow{
@@ -857,6 +866,17 @@ html{scroll-behavior:smooth}
   opacity:0;
   transform:translateY(40px);
   transition:opacity 0.8s ease, transform 0.8s ease;
+}
+
+.section.container{
+  opacity:0;
+  transform:translateY(34px);
+  transition:opacity .75s ease, transform .75s ease;
+}
+
+.section.container.section-visible{
+  opacity:1;
+  transform:translateY(0);
 }
 
 .hero-copy.visible,
