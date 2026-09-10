@@ -113,6 +113,33 @@ const server = http.createServer((request, response) => {
     return sendJson(response, 200, { months: getVisitStats() });
   }
 
+  if (request.url === '/api/category-images') {
+    if (request.method === 'GET') return sendJson(response, 200, { images: readStore().categorySectionImages || [] });
+    if (request.method !== 'PUT') return sendJson(response, 405, { error: 'Método não permitido' });
+    let raw = '';
+    request.on('data', chunk => {
+      raw += chunk;
+      if (raw.length > 25_000_000) {
+        request.removeAllListeners('data');
+        sendJson(response, 413, { error: 'Imagens muito grandes. Escolha arquivos menores.' });
+        request.destroy();
+      }
+    });
+    request.on('end', () => {
+      try {
+        const data = JSON.parse(raw || '{}');
+        if (!Array.isArray(data.images)) return sendJson(response, 400, { error: 'Lista de imagens inválida' });
+        const store = readStore();
+        store.categorySectionImages = data.images.slice(0, 6);
+        ensureStore();
+        const backup = createStoreBackup();
+        fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
+        sendJson(response, 200, { ok: true, backup });
+      } catch { sendJson(response, 400, { error: 'Dados inválidos' }); }
+    });
+    return;
+  }
+
   if (request.url.startsWith('/api/store')) {
     if (request.method === 'GET') return sendJson(response, 200, readStore());
     if (request.method !== 'PUT') return sendJson(response, 405, { error: 'Método não permitido' });

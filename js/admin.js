@@ -124,6 +124,23 @@ async function syncBackupServerData(serverData) {
   return response.ok;
 }
 
+async function syncCategoryImagesOnline(images) {
+  try {
+    const response = await fetch('/api/category-images', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images })
+    });
+    if (!response.ok) {
+      const details = await response.json().catch(() => ({}));
+      showMessage(`⚠️ ${details.error || 'Não foi possível salvar as imagens de ARTES.'}`);
+    }
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 async function loadStoreOnline() {
   if (isSavingProducts) return;
   try {
@@ -699,7 +716,7 @@ categorySectionImageInputs.forEach(input => {
       const images = getCategorySectionImages();
       images[Number(input.dataset.sectionImageIndex)] = await readImageFile(file);
       localStorage.setItem(CATEGORY_SECTION_IMAGES_KEY, JSON.stringify(images));
-      const savedOnline = await syncStoreOnline();
+      const savedOnline = await syncCategoryImagesOnline(images);
       renderCategorySectionPreview();
       showMessage(savedOnline
         ? `Imagem do card ${Number(input.dataset.sectionImageIndex) + 1} salva no servidor!`
