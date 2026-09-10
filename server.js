@@ -120,10 +120,10 @@ const server = http.createServer((request, response) => {
     let requestTooLarge = false;
     request.on('data', chunk => {
       raw += chunk;
-      if (raw.length > 25_000_000) {
+      if (raw.length > 100_000_000) {
         requestTooLarge = true;
         request.removeAllListeners('data');
-        sendJson(response, 413, { error: 'Imagem muito grande. Escolha uma imagem menor.' });
+        sendJson(response, 413, { error: 'Catálogo muito grande. Reduza o tamanho das imagens.' });
         request.destroy();
       }
     });

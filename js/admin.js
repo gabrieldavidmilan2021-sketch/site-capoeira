@@ -91,6 +91,14 @@ function getStorePayload() {
 async function syncStoreOnline() {
   try {
     const response = await fetch('/api/store', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(getStorePayload()) });
+    if (!response.ok) {
+      let error = 'Não foi possível salvar no servidor.';
+      try {
+        const details = await response.json();
+        if (details.error) error = details.error;
+      } catch {}
+      showMessage(`⚠️ ${error}`);
+    }
     return response.ok;
   } catch {
     // A loja continua utilizável localmente se o servidor estiver indisponível.
@@ -168,6 +176,10 @@ function normalizeProductRecord(product = {}) {
     colors: Array.isArray(product.colors) && product.colors.length ? product.colors : ['#f8c8d8', '#2b2b2b', '#ffdfe9'],
     qty: Number.isFinite(qty) ? qty : 0
   };
+}
+
+function createProductId(section) {
+  return `${section[0]}${Date.now()}${Math.random().toString(36).slice(2, 7)}`;
 }
 
 function getSectionProducts(section = activeAdminSection) {
@@ -591,7 +603,7 @@ saveProductBtn.addEventListener('click', async () => {
 
   const previousProduct = index >= 0 ? sectionProducts[index] : null;
   const productData = {
-    id: previousProduct?.id || `${activeAdminSection[0]}${Date.now()}`,
+    id: previousProduct?.id || createProductId(activeAdminSection),
     name,
     price,
     oldPrice,
