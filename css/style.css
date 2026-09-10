@@ -1535,6 +1535,15 @@ html{scroll-behavior:smooth}
   aspect-ratio:1;
   border-radius:24px;
   box-shadow:0 20px 40px rgba(0,0,0,0.08);
+  animation:artsFloat 6s ease-in-out infinite;
+}
+
+.lookbook-item:nth-child(2n){animation-delay:-2s}
+.lookbook-item:nth-child(3n){animation-delay:-4s}
+
+@keyframes artsFloat{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  50%{transform:translateY(-10px) rotate(1deg)}
 }
 
 .lookbook-item img{
@@ -1543,6 +1552,12 @@ html{scroll-behavior:smooth}
   object-fit:cover;
   display:block;
   transition:transform .7s ease;
+  animation:artsImageZoom 8s ease-in-out infinite alternate;
+}
+
+@keyframes artsImageZoom{
+  from{transform:scale(1)}
+  to{transform:scale(1.08)}
 }
 
 .lookbook-item:hover img{transform:scale(1.08)}
