@@ -221,6 +221,23 @@ function getAllProducts() {
 
 async function saveSectionProducts(section, products) {
   const normalized = products.map(normalizeProductRecord);
+  try {
+    const response = await fetch('/api/store-section', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ section, products: normalized })
+    });
+    if (response.ok) {
+      const result = await response.json();
+      const featured = section === 'featured' ? normalized : getSectionProducts('featured');
+      const best = section === 'best' ? normalized : getSectionProducts('best');
+      localStorage.setItem(FEATURED_KEY, JSON.stringify(featured));
+      localStorage.setItem(BEST_KEY, JSON.stringify(best));
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify([...featured, ...best].map(product => ({ ...product, image: product.img }))));
+      return true;
+    }
+  } catch {}
+
   let serverStore = {};
   try {
     const response = await fetch('/api/store', { cache: 'no-store' });

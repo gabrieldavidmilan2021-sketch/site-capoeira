@@ -396,8 +396,11 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   grid-template-columns:1fr 1fr;
 }
 
-.product-card-gallery:has(.image-loading)::before{
-  content:'Carregando imagem...';
+.product-card-gallery{
+  position:relative;
+}
+
+.image-loader{
   position:absolute;
   inset:0;
   display:grid;
@@ -411,6 +414,10 @@ h1, h2, h3, h4, .logo, .section-head h2, .hero-copy h1, .collection-content h2, 
   animation:imageLoading 1.2s linear infinite;
   pointer-events:none;
   z-index:2;
+}
+
+.product-card-gallery.images-ready .image-loader{
+  display:none;
 }
 
 .product-card-gallery .image-loading{

@@ -140,6 +140,41 @@ const server = http.createServer((request, response) => {
     return;
   }
 
+  if (request.url === '/api/store-section') {
+    if (request.method !== 'PUT') return sendJson(response, 405, { error: 'Método não permitido' });
+    let raw = '';
+    request.on('data', chunk => {
+      raw += chunk;
+      if (raw.length > 100_000_000) {
+        request.removeAllListeners('data');
+        sendJson(response, 413, { error: 'Catálogo muito grande. Reduza o tamanho das imagens.' });
+        request.destroy();
+      }
+    });
+    request.on('end', () => {
+      try {
+        const data = JSON.parse(raw || '{}');
+        if (!['featured', 'best'].includes(data.section) || !Array.isArray(data.products)) {
+          return sendJson(response, 400, { error: 'Seção ou produtos inválidos' });
+        }
+        const previousStore = readStore();
+        const store = {
+          ...previousStore,
+          featuredProducts: data.section === 'featured' ? data.products : (previousStore.featuredProducts || []),
+          bestSellers: data.section === 'best' ? data.products : (previousStore.bestSellers || []),
+          lojaProducts: data.section === 'featured'
+            ? [...data.products, ...(previousStore.bestSellers || [])]
+            : [...(previousStore.featuredProducts || []), ...data.products]
+        };
+        ensureStore();
+        const backup = createStoreBackup();
+        fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
+        sendJson(response, 200, { ok: true, count: data.products.length, backup });
+      } catch { sendJson(response, 400, { error: 'Dados inválidos' }); }
+    });
+    return;
+  }
+
   if (request.url.startsWith('/api/store')) {
     if (request.method === 'GET') return sendJson(response, 200, readStore());
     if (request.method !== 'PUT') return sendJson(response, 405, { error: 'Método não permitido' });
